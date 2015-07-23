@@ -1,0 +1,5 @@
+name: OvercastPGM
+main: overcast.pgm.OvercastPGM
+version: .alpha
+authors: [SkylerTyler1337]
+description: a Overcast Network Scrimmage plugin
