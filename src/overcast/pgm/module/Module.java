@@ -10,4 +10,9 @@ public abstract class Module implements Listener {
 	public ModuleAbout getAbout(){
 		return new ModuleAbout(getClass());
 	}
+	
+	
+	public boolean hasListener(){
+		return this.getAbout().getInfo().listener();
+	}
 }

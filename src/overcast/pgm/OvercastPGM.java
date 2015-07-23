@@ -22,6 +22,13 @@ public class OvercastPGM extends JavaPlugin {
 			e.printStackTrace();
 			Log.warning("cant create config file due to a IOException");
 		}
+		
+//		File parent = new File("Rotation");
+//		
+//		if(!parent.isDirectory() || parent.isFile() || parent.isHidden()){
+//			parent.mkdir();
+//		}
+		
 	}
 
 	public void onDisable() {
@@ -31,11 +38,12 @@ public class OvercastPGM extends JavaPlugin {
 	public void addCommand(String name, CommandExecutor command) {
 		this.getCommand(name).setExecutor(command);
 	}
-
+ 
 	public void loadCommands() {
 	}
 
 	public static OvercastPGM getInstance() {
 		return instance;
 	}
+	
 }
