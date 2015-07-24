@@ -1,7 +1,9 @@
 package overcast.pgm.module;
 
+ 
 
-import org.jdom2.Document;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import overcast.pgm.builder.Builder;
 import overcast.pgm.builder.BuilderInfo;
@@ -11,7 +13,11 @@ public class TestBuilder extends Builder {
 
 	@Override
 	public Module build(Document doc) {
-		return new TestModule();
+		Element root = doc.getDocumentElement();
+		
+		Element element = (Element) root.getElementsByTagName("name").item(0);
+		
+		String name = element.getTextContent();
+		return new TestModule(name);
 	}
-
 }

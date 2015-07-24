@@ -1,7 +1,7 @@
 package overcast.pgm.builder;
+ 
 
-
-import org.jdom2.Document;
+import org.w3c.dom.Document;
 
 import overcast.pgm.module.Module;
 

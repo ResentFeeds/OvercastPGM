@@ -1,76 +1,37 @@
 package overcast.pgm.module;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import overcast.pgm.builder.Builder;
-import overcast.pgm.builder.BuilderInfo;
-import overcast.pgm.util.Log;
+import overcast.pgm.module.modules.info.InfoBuilder;
+import overcast.pgm.module.modules.info.InfoModule;
 
 public class ModuleRegistry {
 
-	static List<Class<? extends Module>> modules;
-	static List<Class<? extends Builder>> builders;
+	protected ModuleFactory factory;
 
-	// testing this 
-	// may change this!
-	public ModuleRegistry() {
-		modules = new ArrayList<>();
-		builders = new ArrayList<>();
+	public ModuleRegistry(ModuleFactory factory) {
+		this.factory = factory;
 
-		
-		loadBuilders();
 		loadModules();
-
-		for (Class<? extends Module> module : getModules()) {
-			if (hasModules() && hasBuilders()) {
-				try {
-					ModuleInfo info = module.newInstance().getAbout().getInfo();
-					Log.info(info.name() + info.desc());
-					for (Class<? extends Builder> builders : getBuilders()) {
-						Builder builder = builders.newInstance();
-						BuilderInfo binfo = builder.getAbout().getInfo();
-
-						Log.info("documentable = " + binfo.documentable()
-								+ "ModuleStage = " + binfo.stage().name());
-					}
-
-				} catch (InstantiationException | IllegalAccessException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		loadBuilders();
 	}
 
-	public void loadBuilders(){
-		registerBuilder(TestBuilder.class);
+	public void loadBuilders() {
+		addBuilder(InfoBuilder.class);
 	}
 
-	public static void registerBuilder(Class<? extends Builder> builder) {
-		 builders.add(builder);
+	public ModuleFactory getFactory() {
+		return this.factory;
 	}
 
-	private boolean hasBuilders() {
-		return getBuilders().size() > 0;
+	public void addBuilder(Class<? extends Builder> builder) {
+		getFactory().getBuilders().add(builder);
 	}
 
-	private List<Class<? extends Builder>> getBuilders() {
-		return builders;
+	public void addModule(Class<? extends Module> module) {
+		this.getFactory().getModules().add(module);
 	}
 
-	private void loadModules() {
-		registerModule(TestModule.class);
-	}
-
-	public boolean hasModules() {
-		return getModules().size() > 0 || getModules() != null;
-	}
-
-	public static List<Class<? extends Module>> getModules() {
-		return modules;
-	}
-
-	public static void registerModule(Class<? extends Module> registering) {
-		modules.add(registering);
+	public void loadModules() {
+		addModule(InfoModule.class);
 	}
 }

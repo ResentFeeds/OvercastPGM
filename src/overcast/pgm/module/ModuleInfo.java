@@ -5,8 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import overcast.pgm.builder.Builder;
-
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ModuleInfo {
@@ -19,5 +17,4 @@ public @interface ModuleInfo {
 	
 	public Class<? extends Module>[] requires() default {};
 	
-	public Class<? extends Builder> builder();
 }

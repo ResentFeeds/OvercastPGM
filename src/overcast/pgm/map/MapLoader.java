@@ -1,10 +1,8 @@
-package overcast.pgm.map;
+ package overcast.pgm.map;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import overcast.pgm.util.Log;
 
 public class MapLoader {
 
@@ -29,11 +27,6 @@ public class MapLoader {
 					}
 				}
 			}
-		
-		
-		for(Map map : this.loaded){
-			Log.info(map.getSource().getName());
-		}
 	}
 
 	public static boolean isLoadable(File dir) {
