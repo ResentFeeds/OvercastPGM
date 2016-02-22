@@ -2,7 +2,8 @@ package overcast.pgm.util;
 
 import java.util.Collection;
 
-import org.bukkit.Color;
+import org.apache.logging.log4j.core.pattern.AbstractStyleNameConverter.White;
+import org.bukkit.DyeColor;
 
 import static org.bukkit.ChatColor.*;
 
@@ -31,8 +32,7 @@ public class StringUtils {
 	 *            Suffix to add after each element in the resulting string.
 	 * @return String version of the list of strings.
 	 */
-	public static String listToEnglishCompound(Collection<?> list,
-			String prefix, String suffix) {
+	public static String listToEnglishCompound(Collection<?> list, String prefix, String suffix) {
 		StringBuilder builder = new StringBuilder();
 		int i = 0;
 		for (Object str : list) {
@@ -63,11 +63,29 @@ public class StringUtils {
 
 		return builder.toString();
 	}
-	
-	
-	 
 
 	public static String getTechnicalName(String disabled) {
 		return disabled.trim().toUpperCase().replaceAll(" ", "_");
+	}
+
+	public static String getName(String disabled) {
+		return disabled.replaceAll("_", " ");
+	}
+
+	public static String get(DyeColor color) {
+		switch (color) {
+		case BLACK:
+			return "black";
+		case BLUE:
+			return "blue";
+		case BROWN:
+			return "white";
+		case CYAN:
+			return "cyan";
+		case RED:
+			return "red";
+		default:
+			return "white";
+		}
 	}
 }

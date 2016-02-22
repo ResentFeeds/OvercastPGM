@@ -22,7 +22,9 @@ import overcast.pgm.module.Module;
 import overcast.pgm.module.ModuleCollection;
 import overcast.pgm.module.ModuleFactory;
 import overcast.pgm.module.ModuleStage;
+import overcast.pgm.module.modules.timelimit.TimeModule;
 import overcast.pgm.module.modules.tutorial.TutorialManager;
+import overcast.pgm.timer.MatchTimer;
 import overcast.pgm.timer.StartTimer;
 import overcast.pgm.util.FileUtils;
 import overcast.pgm.util.Log;
@@ -55,6 +57,7 @@ public class Match {
 
 	private ModuleCollection<Module> modules;
 	private TutorialManager tutManager;
+	private MatchTimer mTimer;
 
 	/** state of the match */
 
@@ -72,6 +75,10 @@ public class Match {
 		this.next = pgm.getRotation().getRotationMaps().get(pgm.getRotation().getPostion());
 		this.handler = new MatchHandler(this);
 		this.factory = new ModuleFactory(getDocument());
+
+		StartTimer timer = new StartTimer(30, this);
+		timer.run();
+
 		loadModules();
 		this.move();
 		this.pm = this.pgm.getPluginManager();
@@ -80,8 +87,7 @@ public class Match {
 		load();
 		this.context.enable();
 		this.tutManager = new TutorialManager(this);
-		StartTimer timer = new StartTimer(30, this);
-		timer.run();
+
 	}
 
 	public void loadModules() {
@@ -90,7 +96,8 @@ public class Match {
 				this.modules.add(module);
 			}
 		}
-	} 
+	}
+
 	public void load() {
 		this.context.load();
 		this.getPluginManager().callEvent(new MatchLoadEvent(this, this.map));
@@ -148,6 +155,20 @@ public class Match {
 	public void start() {
 		setState(MatchState.RUNNING);
 		Bukkit.broadcastMessage(GREEN + "The match has started");
+
+		boolean loaded = this.getModules().isModuleLoaded(TimeModule.class);
+
+		if (loaded || !this.map.isObjectives()) {
+			TimeModule timeModule = this.getModules().getModule(TimeModule.class);
+			timeModule.create();
+			timeModule.run();
+		} else {
+			this.mTimer = new MatchTimer(1, this);
+		}
+
+		if (this.mTimer != null) {
+			this.mTimer.run();
+		}
 	}
 
 	/** get the next map */

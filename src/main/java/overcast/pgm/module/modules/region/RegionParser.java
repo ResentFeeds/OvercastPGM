@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 import org.w3c.dom.Element;
 
 import overcast.pgm.module.modules.filter.types.CarryingFilter;
+import overcast.pgm.module.modules.region.parsers.RegionFilterApplicationParser;
 import overcast.pgm.module.modules.region.types.BlockRegion;
 import overcast.pgm.module.modules.region.types.CircleRegion;
 import overcast.pgm.module.modules.region.types.CuboidRegion;
@@ -105,6 +106,11 @@ public class RegionParser {
 		return null;
 	}
 
+	 
+	public RegionFilterApplication parserRFA(Element element, RegionParser parser){
+	    return new RegionFilterApplication(new RegionFilterApplicationParser(element, parser));	
+	}
+	
 	/**
 	 * set the default radius to 3
 	 * 

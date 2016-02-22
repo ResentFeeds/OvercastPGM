@@ -14,13 +14,19 @@ public abstract class OvercastTimer implements Runnable, Cancellable {
 
 	int timer;
 
-    Match match;
+	Match match;
+	static OvercastTimer instance;
 
 	@SuppressWarnings("deprecation")
 	public OvercastTimer(int sec, Match match) {
+		instance = this;
 		this.sec = sec + 1;
 		this.match = match;
 		this.timer = Bukkit.getScheduler().scheduleAsyncRepeatingTask(OvercastPGM.getInstance(), this, 0, 20);
+	}
+
+	public static OvercastTimer getTimer() {
+		return instance;
 	}
 
 	@Override
@@ -35,14 +41,12 @@ public abstract class OvercastTimer implements Runnable, Cancellable {
 
 	@Override
 	public abstract void run();
-	
-	
-	public int getSeconds(){
+
+	public int getSeconds() {
 		return this.sec;
 	}
-	
-	
-	public Match getMatch(){
+
+	public Match getMatch() {
 		return this.match;
 	}
 }

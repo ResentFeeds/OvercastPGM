@@ -3,14 +3,14 @@ package overcast.pgm.util;
 import java.util.ArrayList;
 import java.util.List;
  
-import overcast.pgm.OvercastPGM;
+import overcast.pgm.match.MatchHandler;
 import overcast.pgm.module.modules.kits.KitModule;
 
 public class KitUtils {
 
 	public static List<KitModule> getKits(){
 		List<KitModule> kits = new ArrayList<>();
-		List<KitModule> kitModules = OvercastPGM.getInstance().getMatch().getModules().getModules(KitModule.class);
+		List<KitModule> kitModules = MatchHandler.getMatchHandler().getMatch().getModules().getModules(KitModule.class);
 		
 		for(KitModule kit : kitModules){
 			kits.add(kit);

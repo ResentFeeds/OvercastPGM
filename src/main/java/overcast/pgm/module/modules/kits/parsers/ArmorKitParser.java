@@ -55,7 +55,7 @@ public class ArmorKitParser extends KitParser {
 		List<String> newLore = ItemKitParser.parseLore(lore);
 		List<String> colored = BukkitUtils.colorizeList(newLore);
 		
-		if(isAllowed(this.stack.getType())){
+		if(BukkitUtils.isAllowed(this.stack.getType(), this.allowed)){
 		  if(isColorable(this.stack.getType())){
 		    if(this.meta instanceof LeatherArmorMeta){
 		    	LeatherArmorMeta armor = (LeatherArmorMeta) this.meta;
@@ -80,14 +80,6 @@ public class ArmorKitParser extends KitParser {
 		this.stack.setItemMeta(this.meta);
 	}
 
-	private boolean isAllowed(Material type) {
-		for(Material allow : this.allowed){
-			if(type.equals(allow)){
-				return true;
-			}
-		} 
-		return false;
-	}
 
 	private boolean isColorable(Material type) {
 		for(Material colorable : this.colorables){

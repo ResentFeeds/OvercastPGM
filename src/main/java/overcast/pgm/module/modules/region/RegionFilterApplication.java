@@ -4,8 +4,9 @@ import org.bukkit.util.Vector;
 
 import overcast.pgm.module.modules.filter.Filter;
 import overcast.pgm.module.modules.kits.KitModule;
+import overcast.pgm.module.modules.region.parsers.RegionFilterApplicationParser;
 
-public class RegionFilterApplication {
+public class RegionFilterApplication  {
 
 	private final RFAScope scope;
 	private final Region region;
@@ -15,8 +16,7 @@ public class RegionFilterApplication {
 	private final String message;
 	private final boolean earlyWarning;
 
-	public RegionFilterApplication(RFAScope scope, Region region,
-			Filter filter, KitModule kit, Vector velocity,
+	public RegionFilterApplication(RFAScope scope, Region region, Filter filter, KitModule kit, Vector velocity,
 			boolean relativeVelocity, String message, boolean earlyWarning) {
 		this.scope = scope;
 		this.region = region;
@@ -26,6 +26,10 @@ public class RegionFilterApplication {
 		this.message = message;
 		this.earlyWarning = earlyWarning;
 
+	}
+
+	public RegionFilterApplication(RegionFilterApplicationParser parser) {
+		this(parser.getRFAScope(), parser.getRegion(), null, parser.getKit(), null, false, parser.getMessage(), false);
 	}
 
 	public RFAScope getScope() {
@@ -54,5 +58,13 @@ public class RegionFilterApplication {
 
 	public boolean isEarlyWarning() {
 		return earlyWarning;
+	}
+
+	public boolean hasMessage() {
+		return this.message != null;
+	}
+
+	public boolean hasKit() {
+		return this.kit != null;
 	}
 }

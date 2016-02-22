@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -105,7 +106,7 @@ public class XMLUtils {
 		return elements;
 	}
 
-	public static Element getChildElement(Element parent, String tag) { 
+	public static Element getChildElement(Element parent, String tag) {
 		NodeList lists = parent.getChildNodes();
 		for (int i = 0; i < lists.getLength(); i++) {
 			Node node = lists.item(i);
@@ -129,6 +130,13 @@ public class XMLUtils {
 			}
 		}
 		return null;
+	}
+
+	public static List<Element> getElements(Element parent, String text) {
+		List<Element> matching = new ArrayList<>();
+		Element element = getUniqueChild(parent, text);
+		matching.add(element);
+		return matching;
 	}
 
 	public static ItemStack parseItem(String textContent, int amount, short damage) {
@@ -218,5 +226,16 @@ public class XMLUtils {
 			}
 		}
 		return null;
+	}
+
+	public static DyeColor parseDyeColor(String text) {
+		for (DyeColor dye : DyeColor.values()) {
+			String name = StringUtils.getName(dye.name());
+			if (text.equals(name)) {
+				return dye;
+			}
+		}
+
+		return DyeColor.WHITE;
 	}
 }

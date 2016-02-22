@@ -22,7 +22,6 @@ public class CycleTimer extends OvercastTimer {
 				Bukkit.broadcastMessage(status(this.sec));
 			}
 		} else {
-
 			Bukkit.getScheduler().cancelTask(this.timer);
 		}
 	}

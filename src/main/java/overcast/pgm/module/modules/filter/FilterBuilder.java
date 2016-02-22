@@ -10,7 +10,6 @@ import overcast.pgm.module.Module;
 import overcast.pgm.module.ModuleCollection;
 import overcast.pgm.module.ModuleFactory;
 import overcast.pgm.module.ModuleStage;
-import overcast.pgm.util.Log;
 import overcast.pgm.xml.InvalidXMLException;
 
 @BuilderInfo(stage = ModuleStage.LOAD)
@@ -37,8 +36,7 @@ public class FilterBuilder extends Builder {
 					e.printStackTrace();
 				}
 			}
-		}else{
-			Log.info("its null");
+		}else{ 
 			return null;
 		}
 		return modules;

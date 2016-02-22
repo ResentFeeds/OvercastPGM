@@ -2,14 +2,14 @@ package overcast.pgm.util;
 
 import org.bukkit.Color;
 
-import overcast.pgm.OvercastPGM;
+import overcast.pgm.match.MatchHandler;
 import overcast.pgm.module.modules.team.Team;
 import overcast.pgm.module.modules.team.TeamModule;
 
 public class TeamUtil {
 
 	public static TeamModule getTeamModule() {
-		TeamModule teamModule = (TeamModule) OvercastPGM.getInstance().getMatch().getModules()
+		TeamModule teamModule = (TeamModule) MatchHandler.getMatchHandler().getMatch().getModules()
 				.getModule(TeamModule.class);
 		return teamModule;
 	}
@@ -42,5 +42,5 @@ public class TeamUtil {
 			}
 		} 
 		return null;
-	}
+	} 
 }

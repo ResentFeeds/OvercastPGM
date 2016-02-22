@@ -2,6 +2,7 @@ package overcast.pgm.player;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -61,7 +62,7 @@ public class OvercastPlayer {
 		}
 
 		return null;
-	}
+	} 
 
 	public Player getPlayer() {
 		return this.player;
@@ -225,5 +226,11 @@ public class OvercastPlayer {
 		TutorialModule tutorial = match.getModules().getModule(TutorialModule.class);
 
 		return tutorial.createItem(getTutorialStage());
+	}
+
+	public void viewInventory(OvercastPlayer p) {  
+		for(int i = 0; i < 36; i++){
+
+		}
 	}
 }

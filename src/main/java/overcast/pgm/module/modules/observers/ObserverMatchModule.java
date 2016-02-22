@@ -16,6 +16,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupExperienceEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -153,6 +154,21 @@ public class ObserverMatchModule extends MatchModule implements Listener {
 				event.setCancelled(true);
 			}
 		}
+	}
+	
+	
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractAtEntityEvent event){
+	    Player player = event.getPlayer();
+	    OvercastPlayer p = OvercastPlayer.getPlayers(player);
+	    if(event.getRightClicked() instanceof Player && p.isObserver()){
+	    	Player clickedPlayer = (Player) event.getRightClicked();
+	    	OvercastPlayer clickedP = OvercastPlayer.getPlayers(clickedPlayer); 
+	    	Team team = clickedP.getTeam();
+	    	if(team != TeamUtil.getTeamModule().getObservers()){
+	    		 clickedP.viewInventory(p);
+	    	}
+	    }
 	}
 
 	@EventHandler

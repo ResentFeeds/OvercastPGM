@@ -49,7 +49,6 @@ import overcast.pgm.module.modules.info.Version;
 import overcast.pgm.module.modules.team.TeamManager;
 import overcast.pgm.player.OvercastPlayer;
 import overcast.pgm.rotation.Rotation;
-import overcast.pgm.util.FileUtils;
 import overcast.pgm.util.Log;
 import overcast.pgm.util.TeamUtil;
 
@@ -252,7 +251,7 @@ public class OvercastPGM extends JavaPlugin {
 		listeners.add(new PlayerListener());
 		listeners.add(new ConnectionListener());
 		listeners.add(new ChatListener());
-		//listeners.add(new MatchListener());
+		listeners.add(new MatchListener());
 
 		for (Listener listener : listeners) {
 			registerListener(listener);

@@ -10,6 +10,7 @@ import org.w3c.dom.Element;
 import overcast.pgm.module.ModuleFactory;
 import overcast.pgm.module.modules.filter.types.KillStreakFilter;
 import overcast.pgm.module.modules.filter.types.TeamFilter;
+import overcast.pgm.module.modules.filter.types.logic.NotFilter;
 import overcast.pgm.module.modules.region.RegionContext;
 import overcast.pgm.module.modules.team.Team;
 import overcast.pgm.util.Log;
@@ -66,19 +67,32 @@ public class FilterParser {
 		}
 		return filters;
 	}
-	
-	
-	
-	
+
+	@MethodParser("not")
+	public NotFilter parseNotFilter(Element element) {
+		try {
+			List<Filter> children = parseChildFilters(element);
+			int size = children.size();
+			if (size != 0) {
+				NotFilter notFilter = new NotFilter(children);
+
+				return notFilter;
+			}
+		} catch (InvalidXMLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	@MethodParser("kill-streak")
-	public KillStreakFilter parseKillStreakFilter(Element element){
+	public KillStreakFilter parseKillStreakFilter(Element element) {
 		int amount = element.hasAttribute("amount") ? NumberUtils.parseInteger(element.getAttribute("amount")) : 1;
-	    int max = element.hasAttribute("max") ? NumberUtils.parseInteger(element.getAttribute("max")) : 2;
-	    int min = element.hasAttribute("min") ? NumberUtils.parseInteger(element.getAttribute("min")) : 1;
-	    
-	    KillStreakFilter ks = new KillStreakFilter(amount, max, min);
-	    
-	    return ks;
+		int max = element.hasAttribute("max") ? NumberUtils.parseInteger(element.getAttribute("max")) : 2;
+		int min = element.hasAttribute("min") ? NumberUtils.parseInteger(element.getAttribute("min")) : 1;
+
+		KillStreakFilter ks = new KillStreakFilter(amount, max, min);
+
+		return ks;
 	}
 
 	public List<Element> getFilterChildren(Element parent) {

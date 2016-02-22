@@ -3,8 +3,8 @@ package overcast.pgm.module.modules.info;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
- 
-import org.bukkit.ChatColor; 
+
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import overcast.pgm.builder.Builder;
@@ -25,14 +25,14 @@ public class InfoModule extends Module {
 	private Version proto;
 
 	private HashMap<String, String> names;
-	private HashMap<String, String> contributorNames; 
+	private HashMap<String, String> contributorNames;
 
 	/** authors names clearing */
 
-	public InfoModule(Version proto, String name, String objective,
-			Version version, List<Author> authors,
+	public InfoModule(Version proto, String name, String objective, Version version, List<Author> authors,
 			List<Contributor> contributors, List<Rule> rules) {
 		this.names = new HashMap<>();
+		this.contributorNames = new HashMap<>();
 		this.proto = proto;
 		this.name = name;
 		this.objective = objective;
@@ -51,13 +51,22 @@ public class InfoModule extends Module {
 	public void addAuthorNames() {
 		for (Author author : this.authors) {
 			String name = MojangUtils.getNameByUUID(author.getUUID());
-			this.names.put(name,
-					author.hasContribution() ? author.getContribution() : null);
+			this.names.put(name, author.hasContribution() ? author.getContribution() : null);
+		}
+	}
+
+	public void addContributorNames() {
+		if (hasContributors()) {
+			for (Contributor contrib : this.contributors) {
+				String name = MojangUtils.getContributorNameByUUID(contrib.getUUID());
+
+				this.contributorNames.put(name, contrib.getContribution() != null ? contrib.getContribution() : null);
+			}
 		}
 	}
 
 	public void clearContributorNames() {
-		if(this.contributorNames.size() > 0){
+		if (this.contributorNames.size() > 0) {
 			this.contributorNames.clear();
 		}
 	}
@@ -67,14 +76,12 @@ public class InfoModule extends Module {
 	}
 
 	public boolean hasContributors() {
-		return this.getContributors().size() > 0
-				|| this.getContributors() != null;
+		return this.getContributors().size() > 0 || this.getContributors() != null;
 	}
 
 	public HashMap<String, String> getAuthorNames() {
 		return this.names;
 	}
-
 
 	public Version getVersion() {
 		return this.version;
@@ -128,30 +135,26 @@ public class InfoModule extends Module {
 	}
 
 	public String getFormattedMapTitle() {
-		return BukkitUtils.dashedChatMessage(ChatColor.DARK_AQUA + " "
-				+ this.name + ChatColor.GRAY + " " + this.version, "-",
+		return BukkitUtils.dashedChatMessage(
+				ChatColor.DARK_AQUA + " " + this.name + ChatColor.GRAY + " " + this.version, "-",
 				ChatColor.RED + "" + ChatColor.STRIKETHROUGH);
 	}
 
 	public void getMapInformation(Player p) {
-		p.sendMessage(ChatColor.DARK_PURPLE + ChatColor.BOLD.toString()
-				+ "Objective: " + ChatColor.GOLD + this.objective);
+		p.sendMessage(
+				ChatColor.DARK_PURPLE + ChatColor.BOLD.toString() + "Objective: " + ChatColor.GOLD + this.objective);
 
 		if (this.authors.size() == 1) {
-			p.sendMessage(new String[] { ChatColor.DARK_PURPLE + ""
-					+ ChatColor.BOLD + "Author: " + ChatColor.RED
+			p.sendMessage(new String[] { ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Author: " + ChatColor.RED
 					+ this.names.keySet().toArray()[0] });
 		} else {
-			p.sendMessage(new String[] { ChatColor.DARK_PURPLE + ""
-					+ ChatColor.BOLD + "Authors: " });
+			p.sendMessage(new String[] { ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Authors: " });
 
 			for (Entry<String, String> authorNames : this.names.entrySet()) {
-				String string = new String[] { "* " + ChatColor.RED
-						+ authorNames.getKey() }[0];
+				String string = new String[] { "* " + ChatColor.RED + authorNames.getKey() }[0];
 
 				if (authorNames.getValue() != null) {
-					string += new String[] { ChatColor.GREEN + " ("
-							+ authorNames.getValue() + ")" }[0];
+					string += new String[] { ChatColor.GREEN + " (" + authorNames.getValue() + ")" }[0];
 
 				}
 				p.sendMessage(string);
@@ -159,15 +162,12 @@ public class InfoModule extends Module {
 		}
 
 		if (hasContributors()) {
-			p.sendMessage(new String[] { ChatColor.DARK_PURPLE + ""
-					+ ChatColor.BOLD + "Contributors: " });
-			for (Entry<String, String> contributors : this.contributorNames
-					.entrySet()) {
+			p.sendMessage(new String[] { ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Contributors: " });
+			for (Entry<String, String> contributors : this.contributorNames.entrySet()) {
 				String key = "* " + ChatColor.RED + contributors.getKey();
 
 				if (contributors.getValue() != null) {
-					key += ChatColor.GREEN + " (" + contributors.getValue()
-							+ ")";
+					key += ChatColor.GREEN + " (" + contributors.getValue() + ")";
 				}
 
 				p.sendMessage(key);

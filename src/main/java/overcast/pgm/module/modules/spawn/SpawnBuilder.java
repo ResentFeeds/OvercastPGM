@@ -17,7 +17,7 @@ import overcast.pgm.util.TeamUtil;
 import overcast.pgm.util.XMLUtils;
 import overcast.pgm.xml.XMLParseException;
 
-@BuilderInfo(stage = ModuleStage.START)
+@BuilderInfo(stage = ModuleStage.NORMAL)
 public class SpawnBuilder extends Builder {
 
 	@Override
@@ -44,7 +44,8 @@ public class SpawnBuilder extends Builder {
 		}
 	}
 
-		SpawnModule module = new SpawnModule(team, kit, region);
+		Spawn spawn = new Spawn(team, kit, region);
+		SpawnModule module = new SpawnModule(spawn);
 		modules.add(module);
 		return modules;
 	}

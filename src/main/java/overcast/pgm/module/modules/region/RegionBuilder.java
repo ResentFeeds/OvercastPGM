@@ -17,27 +17,41 @@ import overcast.pgm.xml.XMLParseException;
 public class RegionBuilder extends Builder {
 
 	@Override
-	public ModuleCollection<Module> build(Document doc)
-			throws XMLParseException {
+	public ModuleCollection<Module> build(Document doc) throws XMLParseException {
 		return null;
 	}
 
 	@Override
-	public ModuleCollection<Module> build(Document doc, ModuleFactory factory)
-			throws XMLParseException {
+	public ModuleCollection<Module> build(Document doc, ModuleFactory factory) throws XMLParseException {
 		ModuleCollection<Module> modules = new ModuleCollection<>();
 		RegionParser parser = factory.getRegionContext().getParser();
+		RegionFilterApplication RFA = null;
 		Element root = doc.getDocumentElement();
 		Element regions = XMLUtils.getUniqueChild(root, "regions");
-		if(regions != null){
-			try {
-				parser.parseSubRegions(regions);
-			} catch (InvalidXMLException e) { 
-				e.printStackTrace();
+		if (regions != null) {
+			for (Element child : XMLUtils.getChildElements(regions)) {
+				if (child != null) {
+					if (parser.isRegionElement(child)) {
+						try {
+							parser.parse(child);
+						} catch (InvalidXMLException e) {
+							e.printStackTrace();
+						}
+					} else {
+						System.out.println("passed else");
+
+						if (child.getTagName().equals("apply")) {
+							RFA = parser.parserRFA(child, parser);
+						}
+					}
+				}
 			}
 		}
-		
-		modules.add(new RegionModule(new RFAContext()));
+		RFAContext context = new RFAContext();
+		if (RFA != null) {
+			context.addRFA(RFA);
+		}
+		modules.add(new RegionModule(context));
 		return modules;
 	}
 }

@@ -6,15 +6,10 @@ import java.net.URL;
 import java.util.UUID;
 
 import org.bukkit.Skin;
-import org.bukkit.craftbukkit.v1_8_R1.util.Skins;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import com.mojang.authlib.properties.PropertyMap;
-
-import overcast.pgm.player.OvercastPlayer;
 
 public class MojangUtils {
 
@@ -30,7 +25,7 @@ public class MojangUtils {
 			return (String) result.get("name");
 		} catch (ParseException | IOException e) {
 			e.printStackTrace();
-		}
+	}
 		return null;
 	}
 
@@ -66,5 +61,9 @@ public class MojangUtils {
 
 		return skin;
 
+	}
+
+	public static String getContributorNameByUUID(UUID uuid) { 
+		return null;
 	}
 }

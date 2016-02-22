@@ -12,7 +12,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import overcast.pgm.channels.AdminChannel;
 import overcast.pgm.channels.GlobalChannel;
 import overcast.pgm.channels.TeamChannel;
-import overcast.pgm.chat.Chat;
 import overcast.pgm.module.modules.team.Team;
 import overcast.pgm.player.OvercastPlayer;
 

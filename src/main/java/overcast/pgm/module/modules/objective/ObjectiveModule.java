@@ -1,12 +1,13 @@
 package overcast.pgm.module.modules.objective;
 
-import overcast.pgm.builder.Builder;
 import overcast.pgm.module.Module;
 
-public class ObjectiveModule extends Module {
+public abstract class ObjectiveModule extends Module {
 
 	boolean completed = false;
 	String id;
+	
+	boolean required = true;
 	
 	//TODO 
 
@@ -22,9 +23,11 @@ public class ObjectiveModule extends Module {
 		this.completed = value;
 	}
 
-	@Override
-	public Class<? extends Builder> builder() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean isRequired() {
+		return this.required;
+	}
+
+	public void setRequired(boolean value) {
+		this.required = value;
 	}
 }

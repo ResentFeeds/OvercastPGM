@@ -17,7 +17,7 @@ public class MatchHandler {
 
 	private Match match;
 	/** the match that it occurs in */
-
+	private static MatchHandler instance;
     File source;
 	/** the source being copied */
     File dest;
@@ -25,13 +25,19 @@ public class MatchHandler {
 	/** the destination where the source should be copied to */
 
 	public MatchHandler(Match match) {
-		this.match = match;
-		
+		this.match = match; 
+		instance = this;
 		loadMap(match.getMap(), +1);
 	}
 
 	public Match getMatch() {
 		return this.match;
+	}
+	
+	
+	/** instance of the MatchHandler */
+	public static MatchHandler getMatchHandler(){
+		return instance;
 	}
 	
 	/** 

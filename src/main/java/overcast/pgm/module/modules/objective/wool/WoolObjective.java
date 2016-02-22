@@ -15,8 +15,7 @@ import overcast.pgm.module.modules.region.types.BlockRegion;
 import overcast.pgm.module.modules.team.Team;
 import overcast.pgm.player.OvercastPlayer;
 
-
-@ModuleInfo(name = "wool", desc = "capture the wool") 
+@ModuleInfo(name = "wool", desc = "capture the wool")
 public class WoolObjective extends ObjectiveModule {
 
 	private Team team;
@@ -26,20 +25,18 @@ public class WoolObjective extends ObjectiveModule {
 	private BlockRegion block;
 
 	private OvercastPlayer placer = null;
-	private String name;
 
-	public WoolObjective(String id, Team team, DyeColor color, BlockRegion block, String name) {
+	public WoolObjective(String id, Team team, DyeColor color, BlockRegion block) {
 		super(id);
 		this.team = team;
 		this.color = color;
 		this.block = block;
-		this.name = name;
 
 		this.touched = new HashSet<>();
 	}
-	
+
 	@Override
-	public MatchModule createMatchModule(Match match) { 
+	public MatchModule createMatchModule(Match match) {
 		return new WoolMatchModule(match, this);
 	}
 
@@ -70,9 +67,5 @@ public class WoolObjective extends ObjectiveModule {
 
 	public OvercastPlayer getPlacer() {
 		return this.placer;
-	}
-	
-	public String getMonumentName(){
-		return this.name;
 	}
 }
