@@ -4,12 +4,15 @@ import java.util.Arrays;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import overcast.pgm.module.modules.spawn.Spawn;
 import overcast.pgm.player.OvercastPlayer;
+import overcast.pgm.util.LocationUtils;
 import overcast.pgm.util.TeamUtil;
 
 public class TeamManager {
@@ -27,7 +30,8 @@ public class TeamManager {
 					obs.removePlayer(player.getUniqueId());
 				} else {
 					if (newTeam.equals(teamModule.getObservers())) {
-
+						player.setGameMode(GameMode.CREATIVE);
+						
 						ChatColor bold = ChatColor.BOLD;
 						ItemStack compass = new ItemStack(Material.COMPASS);
 						ItemMeta compassMeta = compass.getItemMeta();
@@ -50,11 +54,15 @@ public class TeamManager {
 
 		newTeam.addMember(player.getUniqueId());
 
+
 		String name = p.getName();
 
 		if (p.hasNickname()) {
 			name = p.getNickname();
 		}
+
+		Spawn spawn = LocationUtils.getSpawn(newTeam);
+		spawn.teleport(p);
 		player.setPlayerListName(newTeam.getColor() + name);
 		player.sendMessage("You joined " + newTeam.getColor() + newTeam.getName());
 	}

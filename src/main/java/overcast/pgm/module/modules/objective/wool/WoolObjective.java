@@ -14,6 +14,7 @@ import overcast.pgm.module.modules.objective.ObjectiveModule;
 import overcast.pgm.module.modules.region.types.BlockRegion;
 import overcast.pgm.module.modules.team.Team;
 import overcast.pgm.player.OvercastPlayer;
+import overcast.pgm.util.StringUtils;
 
 @ModuleInfo(name = "wool", desc = "capture the wool")
 public class WoolObjective extends ObjectiveModule {
@@ -67,5 +68,12 @@ public class WoolObjective extends ObjectiveModule {
 
 	public OvercastPlayer getPlacer() {
 		return this.placer;
+	}
+	
+	
+	public String getWoolName(){
+	   String prefix = StringUtils.get(this.color);
+	   
+	   return prefix + " wool";
 	}
 }

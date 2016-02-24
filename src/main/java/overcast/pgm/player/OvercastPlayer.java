@@ -1,11 +1,20 @@
 package overcast.pgm.player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permission;
 import org.bukkit.potion.PotionEffect;
 
@@ -38,12 +47,37 @@ public class OvercastPlayer {
 
 	static List<OvercastPlayer> players = new ArrayList<>();
 
+	public HashMap<Integer, ItemStack> items;
+
+	public HashMap<Integer, ItemStack> hotbar;
+
 	public OvercastPlayer(Player player) {
 		this.player = player;
 		this.name = this.player.getName();
 		this.tutManager = new TutorialManager(OvercastPGM.getInstance().getMatch());
 		this.channel = ChannelFactory.getChannel(this);
 		this.inventory = this.player.getInventory();
+
+		this.items = new HashMap<>();
+		this.hotbar = new HashMap<>();
+
+		for (int i = 0; i < this.inventory.getSize(); i++) {
+			ItemStack stack = this.inventory.getItem(i);
+
+			if (stack != null) {
+				if (i != 0 && i > 8) {
+					this.items.put(i, stack);
+				} else {
+					int newslot = (i + 36);
+					this.hotbar.put(newslot, stack);
+				}
+			}
+		}
+
+	}
+
+	public boolean hasPotionEffects() {
+		return this.player.getActivePotionEffects().size() > 0;
 	}
 
 	public void add() {
@@ -62,7 +96,7 @@ public class OvercastPlayer {
 		}
 
 		return null;
-	} 
+	}
 
 	public Player getPlayer() {
 		return this.player;
@@ -228,9 +262,62 @@ public class OvercastPlayer {
 		return tutorial.createItem(getTutorialStage());
 	}
 
-	public void viewInventory(OvercastPlayer p) {  
-		for(int i = 0; i < 36; i++){
-
+	// work on potions and auto updating when a player views another players inventory */
+	
+	// testing
+	public void viewInventory(OvercastPlayer p) {
+		Inventory inv = Bukkit.createInventory(this.player, this.inventory.getSize() + (9),
+				getTeam().getColor() + this.getName());
+		for (Entry<Integer, ItemStack> entry : this.items.entrySet()) {
+			inv.setItem(entry.getKey(), entry.getValue());
 		}
+
+		for (Entry<Integer, ItemStack> entry : this.hotbar.entrySet()) {
+			inv.setItem(entry.getKey(), entry.getValue());
+		}
+
+		ItemStack[] armorC = this.inventory.getArmorContents();
+		int i = 3;
+		for (ItemStack armor : armorC) {
+			if (armor != null) {
+				inv.setItem(i, armor);
+				i--;
+			}
+		}
+
+		ItemStack potions = new ItemStack(Material.GLASS_BOTTLE);
+		ItemMeta potionsMeta = potions.getItemMeta();
+
+		potionsMeta.setDisplayName(ChatColor.AQUA + "Potion Effects");
+		List<String> effects = new ArrayList<>();
+		if (this.hasPotionEffects()) {
+			for (PotionEffect effect : this.player.getActivePotionEffects()) {
+				String name = effect.getType().getName().replaceAll("_", " ").toLowerCase();
+				String capitol = name.substring(0);
+
+				capitol.toUpperCase();
+
+				int amplifier = effect.getAmplifier();
+				String outcome = ChatColor.YELLOW + name + " " + amplifier;
+				effects.add(outcome);
+			}
+		}
+
+		if (effects.size() != 0) { 
+			 potionsMeta.setLore(effects);
+		} else {
+			potionsMeta.setLore(Arrays.asList(ChatColor.YELLOW + "No potion effects"));
+		}
+		potions.setItemMeta(potionsMeta);
+		inv.setItem(6, potions);
+		p.getPlayer().openInventory(inv);
+	}
+
+	private boolean hasOnePotionEffect() {
+		return this.player.getActivePotionEffects().size() == 1;
+	}
+
+	public void teleport(Location loc) {
+		this.player.teleport(loc);
 	}
 }

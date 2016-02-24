@@ -20,4 +20,8 @@ public class BlockRegion extends AbstractRegion {
 		return same;
 	}
 
+	
+	public Vector getVector(){
+		return this.vector;
+	}
 }

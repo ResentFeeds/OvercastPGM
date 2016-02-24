@@ -92,6 +92,8 @@ public class RegionParser {
 		Vector vector = XMLUtils.parseVector(element);
 		return new BlockRegion(vector);
 	}
+	
+	
 
 	@MethodParser("cuboid")
 	public CuboidRegion parseCuboid(Element element) {

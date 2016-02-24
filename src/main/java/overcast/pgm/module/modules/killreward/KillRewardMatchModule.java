@@ -16,6 +16,7 @@ import overcast.pgm.module.modules.filter.Filter;
 import overcast.pgm.module.modules.filter.types.KillStreakFilter;
 import overcast.pgm.module.modules.kits.KitModule;
 import overcast.pgm.player.OvercastPlayer;
+import overcast.pgm.util.Log;
 
 public class KillRewardMatchModule extends MatchModule implements Listener {
 
@@ -45,35 +46,7 @@ public class KillRewardMatchModule extends MatchModule implements Listener {
 	public void disable() {
 		HandlerList.unregisterAll(this);
 	}
-	
-	
-	@EventHandler
-	public void onEntityDeath(EntityDamageByEntityEvent event){
-		Entity entity = event.getEntity();
-	    Entity damager = event.getDamager();
-	    int times = 0;
-	    if(damager instanceof Player){
-	    	++times;
-	    	Player Pdamager = (Player) damager;
-			for (KillReward reward : this.rewards) {
-				if (reward != null) {
-					for (Filter filter : reward.getFilters()) {
-						if (filter instanceof KillStreakFilter) {
-							KillStreakFilter ks = (KillStreakFilter) filter;
-							if (ks != null) { 
-								KitModule kit = reward.getKit();
-								if (ks.evaluate(times).isAllowed()) {
-									if (kit != null) {
-										kit.applyKit(OvercastPlayer.getPlayers(Pdamager));
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		} 
-	}
+	 
 
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
@@ -82,6 +55,7 @@ public class KillRewardMatchModule extends MatchModule implements Listener {
 			Player player = (Player) event.getEntity();
 			Player killer = player.getKiller();
 			++times;
+			Log.info(""+times); 
 			for (KillReward reward : this.rewards) {
 				if (reward != null) {
 					for (Filter filter : reward.getFilters()) {

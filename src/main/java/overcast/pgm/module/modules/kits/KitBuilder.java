@@ -3,6 +3,7 @@ package overcast.pgm.module.modules.kits;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.GameMode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -16,6 +17,7 @@ import overcast.pgm.module.Module;
 import overcast.pgm.module.ModuleCollection;
 import overcast.pgm.module.ModuleStage;
 import overcast.pgm.module.modules.kits.parsers.ArmorKitParser;
+import overcast.pgm.module.modules.kits.parsers.GamemodeKitParser;
 import overcast.pgm.module.modules.kits.parsers.HealthKitParser;
 import overcast.pgm.module.modules.kits.parsers.ItemKitParser;
 import overcast.pgm.module.modules.kits.parsers.PotionKitParser;
@@ -66,10 +68,11 @@ public class KitBuilder extends Builder {
 		String id = child.hasAttribute("id") ? child.getAttribute("id") : null;
 		List<String> parents = child.hasAttribute("parents") ? parseParents(child.getAttribute("parents")) : null;
 		HealthKit health = null;
+		GamemodeKit gamemode = null;
 		float saturation = 0;
 		int foodlevel = 20;
 		boolean clearItems = false;
-		boolean clear = false; 
+		boolean clear = false;
 		for (Element c : children) {
 			switch (c.getTagName()) {
 			case "item":
@@ -102,12 +105,15 @@ public class KitBuilder extends Builder {
 			case "foodlevel":
 				foodlevel = NumberUtils.parseInteger(c.getTextContent());
 				break;
+			case "game-mode":
+				gamemode = new GamemodeKit(new GamemodeKitParser(c));
+				break;
 			}
 		}
 		HungerKit hunger = new HungerKit(saturation, foodlevel);
-
-		return new KitModule(id, force, clear, clearItems, parents, items, armor, potions, health, hunger);
-	} 
+		return new KitModule(id, force, clear, clearItems, parents, items, armor, potions, health, hunger,
+				gamemode != null ? gamemode : new GamemodeKit(GameMode.SURVIVAL));
+	}
 
 	private static List<String> parseParents(String parent) {
 		List<String> parents = new ArrayList<>();

@@ -25,11 +25,12 @@ public class KitModule extends Module {
 	private List<PotionKit> potions;
 	// fix these
 	private HealthKit health;
-	private HungerKit hunger; 
+	private HungerKit hunger;
+	private GamemodeKit gamemode;
 
 	public KitModule(String id, boolean force, boolean clear, boolean clearItems, List<String> parents,
 			List<ItemKit> items, List<ArmorKit> armor, List<PotionKit> potions, @Nullable HealthKit health,
-			@Nullable HungerKit hunger) {
+			@Nullable HungerKit hunger, GamemodeKit gamemode) {
 		this.id = id;
 		this.force = force;
 		this.clear = clear;
@@ -39,7 +40,8 @@ public class KitModule extends Module {
 		this.armor = armor;
 		this.potions = potions;
 		this.health = health;
-		this.hunger = hunger; 
+		this.hunger = hunger;
+		this.gamemode = gamemode;
 	}
 
 	@Override
@@ -54,7 +56,7 @@ public class KitModule extends Module {
 
 	public String getID() {
 		return this.id;
-	} 
+	}
 
 	public List<ItemKit> getItems() {
 		return this.items;
@@ -88,8 +90,12 @@ public class KitModule extends Module {
 		return this.getHungerKit() != null;
 	}
 
-	private HungerKit getHungerKit() {
+	public HungerKit getHungerKit() {
 		return this.hunger;
+	}
+
+	public GamemodeKit getGamemodeKit() {
+		return this.gamemode;
 	}
 
 	public HealthKit getHealthKit() {
@@ -109,6 +115,10 @@ public class KitModule extends Module {
 	}
 
 	public void applyKit(OvercastPlayer p) {
+
+		GamemodeKit gamemode = this.getGamemodeKit();
+		gamemode.apply(p);
+		
 		if (clear) {
 			p.getInventory().setArmorContents(null);
 		}
@@ -123,8 +133,7 @@ public class KitModule extends Module {
 				parentkit.applyKit(p);
 			}
 		}
-		
- 
+
 		if (hasHealthKit()) {
 			HealthKit health = this.getHealthKit();
 			health.apply(p, this.force);

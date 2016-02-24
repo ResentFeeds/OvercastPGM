@@ -5,6 +5,7 @@ import overcast.pgm.module.Module;
 public abstract class ObjectiveModule extends Module {
 
 	boolean completed = false;
+	
 	String id;
 	
 	boolean required = true;

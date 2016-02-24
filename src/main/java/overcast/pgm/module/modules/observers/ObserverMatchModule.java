@@ -1,8 +1,12 @@
 package overcast.pgm.module.modules.observers;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,9 +24,11 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupExperienceEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.material.MaterialData;
 
 import overcast.pgm.match.Match;
 import overcast.pgm.module.MatchModule;
@@ -155,20 +161,33 @@ public class ObserverMatchModule extends MatchModule implements Listener {
 			}
 		}
 	}
-	
-	
+
 	@EventHandler
-	public void onPlayerInteract(PlayerInteractAtEntityEvent event){
-	    Player player = event.getPlayer();
-	    OvercastPlayer p = OvercastPlayer.getPlayers(player);
-	    if(event.getRightClicked() instanceof Player && p.isObserver()){
-	    	Player clickedPlayer = (Player) event.getRightClicked();
-	    	OvercastPlayer clickedP = OvercastPlayer.getPlayers(clickedPlayer); 
-	    	Team team = clickedP.getTeam();
-	    	if(team != TeamUtil.getTeamModule().getObservers()){
-	    		 clickedP.viewInventory(p);
-	    	}
-	    }
+	public void onEntityInteract(PlayerInteractAtEntityEvent event) {
+		Player player = event.getPlayer();
+		OvercastPlayer who = OvercastPlayer.getPlayers(player);
+		if (event.getRightClicked() instanceof Player) {
+			OvercastPlayer right = OvercastPlayer.getPlayers((Player) event.getRightClicked());
+
+			if (who.isObserver() && right.isObserver())
+				return;
+
+			right.viewInventory(who);
+		}
+	}
+
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractAtEntityEvent event) {
+		Player player = event.getPlayer();
+		OvercastPlayer p = OvercastPlayer.getPlayers(player);
+		if (event.getRightClicked() instanceof Player && p.isObserver()) {
+			Player clickedPlayer = (Player) event.getRightClicked();
+			OvercastPlayer clickedP = OvercastPlayer.getPlayers(clickedPlayer);
+			Team team = clickedP.getTeam();
+			if (team != TeamUtil.getTeamModule().getObservers()) {
+				clickedP.viewInventory(p);
+			}
+		}
 	}
 
 	@EventHandler
@@ -204,13 +223,13 @@ public class ObserverMatchModule extends MatchModule implements Listener {
 					} else if (event.getCurrentItem().getType().equals(Material.LEATHER_HELMET)) {
 						LeatherArmorMeta lm = (LeatherArmorMeta) event.getCurrentItem().getItemMeta();
 						String name = ChatColor.stripColor(lm.getDisplayName());
-                        event.setCancelled(true);
+						event.setCancelled(true);
 						Team team = TeamUtil.getTeam(name);
 						int members = team.getMembers().size();
 						int max = team.getMax();
 						if (team != null) {
-						   if(!(members > max))
-							TeamManager.addPlayer(team, player);
+							if (!(members > max))
+								TeamManager.addPlayer(team, player);
 							p.closeInventory();
 						}
 					}

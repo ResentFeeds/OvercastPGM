@@ -101,7 +101,7 @@ public class RegionMatchModule extends MatchModule implements Listener {
 		List<Region> contains = rcontext.getContaining(to.toVector());
 
 		for (Region r : contains) {
-			if (r != null) {
+			if (r != null && r instanceof CircleRegion) {
 				CircleRegion circle = (CircleRegion) r;
 
 				if (circle != null) {

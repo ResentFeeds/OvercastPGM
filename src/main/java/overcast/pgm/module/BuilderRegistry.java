@@ -18,6 +18,7 @@ import overcast.pgm.module.modules.objective.wool.WoolBuilder;
 import overcast.pgm.module.modules.observers.ObserverBuilder;
 import overcast.pgm.module.modules.projectiles.bow.BowProjectileBuilder;
 import overcast.pgm.module.modules.region.RegionBuilder;
+import overcast.pgm.module.modules.spawn.SpawnBuilder;
 import overcast.pgm.module.modules.team.TeamBuilder;
 import overcast.pgm.module.modules.timelimit.TimeBuilder;
 import overcast.pgm.module.modules.tntracker.TNTTrackerBuilder;
@@ -61,7 +62,7 @@ public class BuilderRegistry {
 		addBuilder(ToolRepairBuilder.class);
 		addBuilder(TimeBuilder.class);
 		addBuilder(BroadcastBuilder.class);
-		//addBuilder(SpawnBuilder.class);
+	    addBuilder(SpawnBuilder.class);
 		addBuilder(WoolBuilder.class);
 	}
 

@@ -2,7 +2,6 @@ package overcast.pgm.util;
 
 import java.util.Collection;
 
-import org.apache.logging.log4j.core.pattern.AbstractStyleNameConverter.White;
 import org.bukkit.DyeColor;
 
 import static org.bukkit.ChatColor.*;

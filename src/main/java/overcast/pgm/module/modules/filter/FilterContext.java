@@ -46,4 +46,9 @@ public class FilterContext extends ContextStore<Filter> {
 	public FilterParser getParser(){
 		return this.parser;
 	}
+	
+	
+	public Filter getFilter(String attr){
+		 return this.get(attr);
+	}
 }
