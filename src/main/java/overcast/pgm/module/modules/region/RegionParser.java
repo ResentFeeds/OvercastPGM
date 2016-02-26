@@ -8,7 +8,6 @@ import java.util.Map;
 import org.bukkit.util.Vector;
 import org.w3c.dom.Element;
 
-import overcast.pgm.module.modules.filter.types.CarryingFilter;
 import overcast.pgm.module.modules.region.parsers.RegionFilterApplicationParser;
 import overcast.pgm.module.modules.region.types.BlockRegion;
 import overcast.pgm.module.modules.region.types.CircleRegion;
@@ -99,9 +98,8 @@ public class RegionParser {
 	public CuboidRegion parseCuboid(Element element) {
 		try {
 			Vector min = XMLUtils.parseVector(element.getAttributeNode("min"));
-			Vector max = XMLUtils.parseVector(element.getAttributeNode("max")); 
-			CarryingFilter filter = new CarryingFilter(element.getAttribute("material"));
-			return new CuboidRegion(min, max, filter);
+			Vector max = XMLUtils.parseVector(element.getAttributeNode("max"));  
+			return new CuboidRegion(min, max);
 		} catch (InvalidXMLException e) {
 			e.printStackTrace();
 		}

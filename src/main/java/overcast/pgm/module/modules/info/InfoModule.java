@@ -26,11 +26,12 @@ public class InfoModule extends Module {
 
 	private HashMap<String, String> names;
 	private HashMap<String, String> contributorNames;
+	 
 
 	/** authors names clearing */
 
 	public InfoModule(Version proto, String name, String objective, Version version, List<Author> authors,
-			List<Contributor> contributors, List<Rule> rules) {
+			List<Contributor> contributors, List<Rule> rules) { 
 		this.names = new HashMap<>();
 		this.contributorNames = new HashMap<>();
 		this.proto = proto;
@@ -173,5 +174,5 @@ public class InfoModule extends Module {
 				p.sendMessage(key);
 			}
 		}
-	}
+	} 
 }

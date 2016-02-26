@@ -1,26 +1,18 @@
 package overcast.pgm.module.modules.region.types;
 
-import javax.annotation.Nullable;
-
 import org.bukkit.util.Vector;
 
-import com.google.common.base.Optional;
-
-import overcast.pgm.module.modules.filter.types.CarryingFilter;
 import overcast.pgm.module.modules.region.AbstractRegion;
 
 public class CuboidRegion extends AbstractRegion {
 
 	private final Vector min;
-	private final Vector max;
-	private Optional<CarryingFilter> carry;
-
-	//TODO add filters */
+	private final Vector max; 
+ 
 	
-	public CuboidRegion(Vector min, Vector max, @Nullable CarryingFilter carry) {
+	public CuboidRegion(Vector min, Vector max) {
 		this.min = min;
-		this.max = max;
-		this.carry = Optional.fromNullable(carry);
+		this.max = max; 
 	}
 
 	@Override
@@ -29,13 +21,5 @@ public class CuboidRegion extends AbstractRegion {
 				&& (point.getY() >= min.getY()) && (point.getY() <= max.getY())
 				&& (point.getZ() >= min.getZ()) && (point.getZ() <= max.getZ()));
 	}
-	
-	
-	public boolean hasCarryFilter(){
-		return this.getCarryFilter().isPresent();
-	}
-
-    public Optional<CarryingFilter> getCarryFilter() {
-		return this.carry;
-	}
+	 
 }

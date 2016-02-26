@@ -69,6 +69,7 @@ public class KitBuilder extends Builder {
 		List<String> parents = child.hasAttribute("parents") ? parseParents(child.getAttribute("parents")) : null;
 		HealthKit health = null;
 		GamemodeKit gamemode = null;
+		float walkspeed = 0.2f ;
 		float saturation = 0;
 		int foodlevel = 20;
 		boolean clearItems = false;
@@ -108,11 +109,14 @@ public class KitBuilder extends Builder {
 			case "game-mode":
 				gamemode = new GamemodeKit(new GamemodeKitParser(c));
 				break;
+			case "walk-speed": 
+				walkspeed = NumberUtils.parseFloat(c.getTextContent());
+				break;
 			}
 		}
 		HungerKit hunger = new HungerKit(saturation, foodlevel);
 		return new KitModule(id, force, clear, clearItems, parents, items, armor, potions, health, hunger,
-				gamemode != null ? gamemode : new GamemodeKit(GameMode.SURVIVAL));
+				gamemode != null ? gamemode : new GamemodeKit(GameMode.SURVIVAL), walkspeed);
 	}
 
 	private static List<String> parseParents(String parent) {

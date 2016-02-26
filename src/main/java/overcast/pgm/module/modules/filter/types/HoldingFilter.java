@@ -30,4 +30,7 @@ public class HoldingFilter extends AbstractSingleFilter {
 		return FilterState.ABSTAIN;
 	}
 
+	public Material getMaterial(){
+		return this.mat;
+	}
 }

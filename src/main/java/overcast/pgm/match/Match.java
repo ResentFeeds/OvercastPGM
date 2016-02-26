@@ -12,6 +12,7 @@ import static org.bukkit.ChatColor.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 import overcast.pgm.OvercastPGM;
 import overcast.pgm.event.MatchLoadEvent;
@@ -22,6 +23,8 @@ import overcast.pgm.module.Module;
 import overcast.pgm.module.ModuleCollection;
 import overcast.pgm.module.ModuleFactory;
 import overcast.pgm.module.ModuleStage;
+import overcast.pgm.module.modules.team.Team;
+import overcast.pgm.module.modules.team.TeamModule;
 import overcast.pgm.module.modules.timelimit.TimeModule;
 import overcast.pgm.module.modules.tutorial.TutorialManager;
 import overcast.pgm.timer.MatchTimer;
@@ -163,10 +166,11 @@ public class Match {
 			timeModule.create();
 			timeModule.run();
 		} else {
-			this.mTimer = new MatchTimer(1, this);
+			this.mTimer = new MatchTimer(-1, this);
 		}
 
-		if (this.mTimer != null) {
+		TeamModule teamModule = this.getModules().getModule(TeamModule.class); 
+		if (this.mTimer != null && teamModule.hasEnoughPlayers()) {
 			this.mTimer.run();
 		}
 	}

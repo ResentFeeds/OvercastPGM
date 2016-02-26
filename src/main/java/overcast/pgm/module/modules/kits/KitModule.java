@@ -27,10 +27,11 @@ public class KitModule extends Module {
 	private HealthKit health;
 	private HungerKit hunger;
 	private GamemodeKit gamemode;
+	private float walkspeed;
 
 	public KitModule(String id, boolean force, boolean clear, boolean clearItems, List<String> parents,
 			List<ItemKit> items, List<ArmorKit> armor, List<PotionKit> potions, @Nullable HealthKit health,
-			@Nullable HungerKit hunger, GamemodeKit gamemode) {
+			@Nullable HungerKit hunger, GamemodeKit gamemode, float walkspeed) {
 		this.id = id;
 		this.force = force;
 		this.clear = clear;
@@ -42,6 +43,7 @@ public class KitModule extends Module {
 		this.health = health;
 		this.hunger = hunger;
 		this.gamemode = gamemode;
+		this.walkspeed = walkspeed;
 	}
 
 	@Override
@@ -118,7 +120,7 @@ public class KitModule extends Module {
 
 		GamemodeKit gamemode = this.getGamemodeKit();
 		gamemode.apply(p);
-		
+
 		if (clear) {
 			p.getInventory().setArmorContents(null);
 		}
@@ -142,6 +144,8 @@ public class KitModule extends Module {
 		HungerKit hunger = this.getHungerKit();
 
 		hunger.apply(p, this.force);
+
+		p.setWalkSpeed(this.walkspeed != 0.2f ? this.walkspeed / 5 : 0.2f);
 
 		if (hasPotions()) {
 			for (PotionKit potion : this.getPotions()) {
@@ -171,5 +175,6 @@ public class KitModule extends Module {
 				break;
 			}
 		}
+
 	}
 }

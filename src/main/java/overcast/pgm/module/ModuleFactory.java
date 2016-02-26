@@ -11,85 +11,81 @@ import overcast.pgm.module.modules.region.RegionContext;
 
 public class ModuleFactory {
 
-	public List<Module> modules; 
+	public List<Module> modules;
 	public List<Builder> builders;
 	public BuilderRegistry registry;
 	public Document doc;
-	
+
 	/** filters and regions */
-	
+
 	private FilterContext filters;
 	private RegionContext regions;
 
-	public ModuleFactory(Document doc){
-		this.modules = new ArrayList<>(); 
+	public ModuleFactory(Document doc) {
+		this.modules = new ArrayList<>();
 		this.builders = new ArrayList<>();
 		this.doc = doc;
 		this.filters = new FilterContext(this);
 		this.regions = new RegionContext();
-		this.registry = new BuilderRegistry();  
-		
-		for(Class<? extends Builder> builder : this.registry.getBuilders()){
+		this.registry = new BuilderRegistry();
+
+		for (Class<? extends Builder> builder : this.registry.getBuilders()) {
 			try {
 				Builder build = builder.newInstance();
 				this.builders.add(build);
-			} catch (InstantiationException | IllegalAccessException e) { 
+			} catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
-	} 
-	
+	}
 
-
-	  public List<Module> build(Document doc, ModuleStage time) {
-	        List<Module> results = new ArrayList<>();
-	        for (Builder builder : builders) {
-	            try {
-	                if (builder.getAbout().getInfo().stage().equals(time)) {
-	                    try {
-	                    	if(builder.build(doc) != null){
-	                    		results.addAll(builder.build(doc));
-	                    	}else{
-	                    		results.addAll(builder.build(doc, this));
-	                    	}
-	                    } catch (Throwable t) {
-	                        t.printStackTrace();
-	                    }
-	                }
-	            } catch (NullPointerException e) {
-	                if (time != ModuleStage.NORMAL) ;
-	                else try { 
-	                	 if(builder.build(doc) != null){
-	                		 results.addAll(builder.build(doc));
-	                	 }else{
-	                		 results.addAll(builder.build(doc, this));
-	                	 }
-	                } catch (Throwable t) {
-	                    t.printStackTrace();
-	                }
-	            }
-	        }
-	        return results;
-	    }
-
-
+	// ORIGINAL
+	public List<Module> build(Document doc, ModuleStage time) {
+		List<Module> results = new ArrayList<>();
+		for (Builder builder : builders) {
+			try {
+				if (builder.getAbout().getInfo().stage().equals(time)) {
+					try {
+						if (builder.build(doc) != null) {
+							results.addAll(builder.build(doc));
+						} else {
+							 results.addAll(builder.build(doc, this));
+						}
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
+				}
+			} catch (NullPointerException e) {
+				if (time != ModuleStage.NORMAL)
+					;
+				else
+					try {
+						if (builder.build(doc) != null) {
+							results.addAll(builder.build(doc));
+						} else {
+							results.addAll(builder.build(doc, this));
+						}
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
+			}
+		}
+		return results;
+	}
 
 	public BuilderRegistry getRegistry() {
 		return this.registry;
-	}  
-  
+	}
+
 	public Document getDocument() {
 		return this.doc;
 	}
 
-
-
 	public RegionContext getRegionContext() {
 		return this.regions;
-	} 
-	
-	
-	public FilterContext getFilterContext(){
+	}
+
+	public FilterContext getFilterContext() {
 		return this.filters;
 	}
 }

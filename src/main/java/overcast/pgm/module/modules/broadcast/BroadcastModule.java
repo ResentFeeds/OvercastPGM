@@ -74,6 +74,7 @@ public class BroadcastModule extends TaskedModule {
 
 	@Override
 	public void create() {
+		//nothing
 	}
 
 

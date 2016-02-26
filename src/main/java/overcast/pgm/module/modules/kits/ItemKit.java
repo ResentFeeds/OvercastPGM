@@ -10,13 +10,16 @@ public class ItemKit {
 	ItemStack stack;
 	int slot;
 
+	ItemKitParser parser;
+
 	public ItemKit(int slot, ItemStack stack) {
 		this.slot = slot;
-		this.stack = stack; 
+		this.stack = stack;
 	}
 
 	public ItemKit(ItemKitParser parser) {
 		this(parser.getSlot(), parser.getItemStack());
+		this.parser = parser;
 	}
 
 	public ItemStack getItemStack() {
@@ -28,8 +31,7 @@ public class ItemKit {
 	}
 
 	public void apply(OvercastPlayer p, boolean force) {
-		PlayerInventory inv = p.getPlayer().getInventory();
-
+		PlayerInventory inv = p.getPlayer().getInventory();  
 		if (inv.getItem(slot) == null || force) {
 			inv.setItem(slot, stack);
 		} else {

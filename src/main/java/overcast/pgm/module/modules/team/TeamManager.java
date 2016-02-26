@@ -20,6 +20,9 @@ public class TeamManager {
 	public static void addPlayer(Team newTeam, OvercastPlayer p) {
 		TeamModule teamModule = TeamUtil.getTeamModule();
 		Player player = p.getPlayer();
+		player.getInventory().setArmorContents(null);
+		player.getInventory().clear();
+		p.setWalkSpeed(0.2f);
 		for (Team team : teamModule.getTeams()) {
 			if (team.isMember(player.getUniqueId())) {
 				team.removePlayer(player.getUniqueId());
@@ -31,7 +34,6 @@ public class TeamManager {
 				} else {
 					if (newTeam.equals(teamModule.getObservers())) {
 						player.setGameMode(GameMode.CREATIVE);
-						
 						ChatColor bold = ChatColor.BOLD;
 						ItemStack compass = new ItemStack(Material.COMPASS);
 						ItemMeta compassMeta = compass.getItemMeta();
@@ -54,12 +56,7 @@ public class TeamManager {
 
 		newTeam.addMember(player.getUniqueId());
 
-
-		String name = p.getName();
-
-		if (p.hasNickname()) {
-			name = p.getNickname();
-		}
+		String name = p.hasNickname() ? p.getNickname() : p.getName();
 
 		Spawn spawn = LocationUtils.getSpawn(newTeam);
 		spawn.teleport(p);

@@ -1,5 +1,7 @@
 package overcast.pgm.module.modules.filter;
 
+import java.util.List;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -12,7 +14,7 @@ import overcast.pgm.module.ModuleFactory;
 import overcast.pgm.module.ModuleStage;
 import overcast.pgm.xml.InvalidXMLException;
 
-@BuilderInfo(stage = ModuleStage.LOAD)
+@BuilderInfo(stage = ModuleStage.START)
 public class FilterBuilder extends Builder {
 
 	@Override
@@ -26,18 +28,20 @@ public class FilterBuilder extends Builder {
 
 		Element root = doc.getDocumentElement();
 		FilterParser parser = fac.getFilterContext().getParser();
+		List<Filter> children = null;
 		Node filtersNode = root.getElementsByTagName("filters").item(0);
 		if (filtersNode != null) {
 			if (filtersNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element) filtersNode;
 				try {
-					modules.add(new FilterModule(new FilterNode(null, parser.parseChildFilters(element))));
-				} catch (InvalidXMLException e) {
-					e.printStackTrace();
+					 children = parser.parseChildFilters(element);;
+				} catch (InvalidXMLException e1) {
+					e1.printStackTrace();
 				}
 			}
-		}else{ 
-			return null;
+			
+			FilterModule filter = new FilterModule(null, children);
+			modules.add(filter);
 		}
 		return modules;
 	}

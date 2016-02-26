@@ -8,6 +8,7 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.World.Environment;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
@@ -237,5 +238,16 @@ public class XMLUtils {
 		}
 
 		return DyeColor.WHITE;
+	}
+
+	public static Environment parseDimension(Element element) {
+		  String text = element.getTextContent();
+		  for(Environment dimension : Environment.values()){
+			  String name = StringUtils.getName(dimension.name());
+			  if(text.equalsIgnoreCase(name)){
+				return dimension;
+			}
+		}
+		return null;
 	}
 }

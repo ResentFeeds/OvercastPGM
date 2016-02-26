@@ -17,7 +17,7 @@ import overcast.pgm.match.Match;
 import overcast.pgm.module.modules.filter.Filter;
 import overcast.pgm.module.modules.filter.FilterContext;
 import overcast.pgm.module.modules.filter.FilterModule;
-import overcast.pgm.module.modules.filter.FilterNode;
+import overcast.pgm.player.OvercastPlayer;
 import overcast.pgm.util.BukkitUtils;
 import overcast.pgm.util.XMLUtils;
 
@@ -52,6 +52,17 @@ public class CubeCommand {
 		}
 	}
 
+	@Command(aliases = "view", desc = "view your inventory")
+	public static void inventory(final CommandContext args, CommandSender sender){
+		if(sender instanceof Player){
+			OvercastPlayer player = OvercastPlayer.getPlayers((Player) sender);
+			if(player.isObserver()){
+				player.viewInventory(player);
+			}else{
+				player.sendMessage(ChatColor.RED + "You need to be a observer to do this");
+			}
+		}
+	}
 	@Command(aliases = "filters", desc = "a filters command")
 	public static void filters(final CommandContext args, CommandSender sender) {
 		if (sender instanceof Player) {
@@ -68,9 +79,8 @@ public class CubeCommand {
 						player.sendMessage(context.getName(entry));
 					}
 				}
-
-				FilterNode node = filterMod.getFilterNode();
-				List<Filter> children = node.getChildren();
+ 
+				List<Filter> children = filterMod.getChildren();
 
 				for (Filter filter : children) {
 					if (filter != null) {

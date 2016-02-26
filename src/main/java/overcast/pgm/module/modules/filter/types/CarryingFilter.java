@@ -1,18 +1,17 @@
 package overcast.pgm.module.modules.filter.types;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import overcast.pgm.module.modules.filter.FilterState;
-import overcast.pgm.util.XMLUtils;
+import overcast.pgm.module.modules.kits.ItemKit;
 
 public class CarryingFilter extends AbstractSingleFilter {
 
-	private Material material;
+	private ItemKit item;
 
-	public CarryingFilter(String attr) {
+	public CarryingFilter(ItemKit item) {
 		super();
-		this.material = XMLUtils.parseMaterial(attr);
+		this.item = item;
 	}
 
 	@Override
@@ -21,12 +20,12 @@ public class CarryingFilter extends AbstractSingleFilter {
 			Player player = (Player) obj;
 
 			ItemStack[] inventory = player.getInventory().getContents();
-
+			ItemStack item = this.item.getItemStack();
 			for (ItemStack stack : inventory) {
-				if (stack.getType().equals(this.material)) {
+				if (stack.getType().equals(item.getType()) || item.hasItemMeta() ? stack.getItemMeta().getDisplayName().equals(item.getItemMeta().getDisplayName()) : false) {
 					return FilterState.ALLOW;
 				} else {
-					return FilterState.DENY;
+					return FilterState.ABSTAIN;
 				}
 			}
 		}

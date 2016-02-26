@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Material;
 import org.w3c.dom.Element;
 
 import overcast.pgm.module.ModuleFactory;
+import overcast.pgm.module.modules.filter.types.HoldingFilter;
 import overcast.pgm.module.modules.filter.types.KillStreakFilter;
 import overcast.pgm.module.modules.filter.types.TeamFilter;
 import overcast.pgm.module.modules.filter.types.logic.NotFilter;
@@ -95,6 +97,12 @@ public class FilterParser {
 		return ks;
 	}
 
+	@MethodParser("holding")
+	public HoldingFilter parseHoldingFilter(Element element) {
+		Material mat = XMLUtils.parseMaterial(element.getTextContent());
+		return new HoldingFilter(mat);
+	}
+
 	public List<Element> getFilterChildren(Element parent) {
 		List<Element> elements = new ArrayList<Element>();
 		for (Element el : XMLUtils.getChildElements(parent)) {
@@ -122,7 +130,7 @@ public class FilterParser {
 			if (this.filterContext.get(id) == null) {
 				this.filterContext.add(id, filter);
 			} else {
-				throw new InvalidXMLException("There is already a region with that id ", element);
+				throw new InvalidXMLException("There is already a filter with that id ", element);
 			}
 		}
 		Log.info("Parsed " + element.getTagName() + " with an id of " + id);

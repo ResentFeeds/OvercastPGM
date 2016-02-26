@@ -17,9 +17,7 @@ public class PlayerListener implements Listener {
 	public void onJoin(PlayerJoinEvent event){
 		OvercastPlayer player = new OvercastPlayer(event.getPlayer());
 		player.add();
-		TeamManager.addPlayer(TeamUtil.getTeamModule().getObservers(), player);
-		
-		
+		TeamManager.addPlayer(TeamUtil.getTeamModule().getObservers(), player);  
 	}
 	
 	

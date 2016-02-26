@@ -1,12 +1,10 @@
 package overcast.pgm.module.modules.observers;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LightningStrike;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,19 +15,20 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerPickupExperienceEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.material.MaterialData;
-
 import overcast.pgm.match.Match;
 import overcast.pgm.module.MatchModule;
 import overcast.pgm.module.modules.team.Team;
@@ -160,19 +159,23 @@ public class ObserverMatchModule extends MatchModule implements Listener {
 				event.setCancelled(true);
 			}
 		}
-	}
-
+	} 
+	
 	@EventHandler
-	public void onEntityInteract(PlayerInteractAtEntityEvent event) {
-		Player player = event.getPlayer();
-		OvercastPlayer who = OvercastPlayer.getPlayers(player);
-		if (event.getRightClicked() instanceof Player) {
-			OvercastPlayer right = OvercastPlayer.getPlayers((Player) event.getRightClicked());
+	public void onInventoryClose(InventoryCloseEvent event) {
+		OvercastPlayer p = OvercastPlayer.getPlayers((Player) event.getPlayer());
 
-			if (who.isObserver() && right.isObserver())
-				return;
+		String name = ChatColor.stripColor(event.getInventory().getName());
+		OvercastPlayer whos = OvercastPlayer.getPlayers(name);
 
-			right.viewInventory(who);
+		if (p != null && whos != null) {
+			if (whos.hotbar.size() > 0) {
+				whos.hotbar.clear();
+			}
+
+			if (whos.items.size() > 0) {
+				whos.items.clear();
+			}
 		}
 	}
 
@@ -184,15 +187,42 @@ public class ObserverMatchModule extends MatchModule implements Listener {
 			Player clickedPlayer = (Player) event.getRightClicked();
 			OvercastPlayer clickedP = OvercastPlayer.getPlayers(clickedPlayer);
 			Team team = clickedP.getTeam();
-			if (team != TeamUtil.getTeamModule().getObservers()) {
-				clickedP.viewInventory(p);
+			if (team == TeamUtil.getTeamModule().getObservers())
+				return;
+
+			clickedP.viewInventory(p);
+		}
+	}
+
+	// test this tomorrow ;)
+	@EventHandler
+	public void onInventory(InventoryPickupItemEvent event) {
+		Inventory inv = event.getInventory();
+
+		String name = ChatColor.stripColor(inv.getName());
+		ItemStack stack = event.getItem().getItemStack();
+		for (OvercastPlayer overcast : OvercastPlayer.getPlayers()) {
+			if (name.equals(overcast.getName())) {
+				if (stack != null) {
+					event.setCancelled(true);
+				}
 			}
 		}
 	}
 
 	@EventHandler
 	public void onProjectile(ProjectileLaunchEvent event) {
-		/** TODO */
+		if(event.getEntity().getShooter() instanceof HumanEntity){
+			 HumanEntity human = (HumanEntity) event.getEntity().getShooter();
+			 
+			 if(human instanceof Player){
+				 Player player = (Player) human;
+				 OvercastPlayer p = OvercastPlayer.getPlayers(player);
+				 if(p.isObserver()){
+					 event.setCancelled(true);
+				 }
+			 }
+		}
 	}
 
 	@EventHandler
@@ -231,6 +261,16 @@ public class ObserverMatchModule extends MatchModule implements Listener {
 							if (!(members > max))
 								TeamManager.addPlayer(team, player);
 							p.closeInventory();
+						}
+					}
+				}
+
+				// prevent a player from moving items from another players
+				// inventory
+				for (OvercastPlayer overcast : OvercastPlayer.getPlayers()) {
+					if (overcast != null) {
+						if (ChatColor.stripColor(event.getInventory().getName()).equalsIgnoreCase(overcast.getName())) {
+							event.setCancelled(true);
 						}
 					}
 				}

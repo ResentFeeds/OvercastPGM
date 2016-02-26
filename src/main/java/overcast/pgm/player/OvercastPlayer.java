@@ -60,20 +60,6 @@ public class OvercastPlayer {
 
 		this.items = new HashMap<>();
 		this.hotbar = new HashMap<>();
-
-		for (int i = 0; i < this.inventory.getSize(); i++) {
-			ItemStack stack = this.inventory.getItem(i);
-
-			if (stack != null) {
-				if (i != 0 && i > 8) {
-					this.items.put(i, stack);
-				} else {
-					int newslot = (i + 36);
-					this.hotbar.put(newslot, stack);
-				}
-			}
-		}
-
 	}
 
 	public boolean hasPotionEffects() {
@@ -95,6 +81,17 @@ public class OvercastPlayer {
 			}
 		}
 
+		return null;
+	}
+	
+	
+
+	public static OvercastPlayer getPlayers(String name) {
+		for(OvercastPlayer players : getPlayers()){
+			if(players.getName().equals(name)){
+				return players;
+			}
+		}
 		return null;
 	}
 
@@ -262,12 +259,27 @@ public class OvercastPlayer {
 		return tutorial.createItem(getTutorialStage());
 	}
 
-	// work on potions and auto updating when a player views another players inventory */
-	
+	// work on potions and auto updating when a player views another players
+	// inventory */
+
 	// testing
 	public void viewInventory(OvercastPlayer p) {
 		Inventory inv = Bukkit.createInventory(this.player, this.inventory.getSize() + (9),
 				getTeam().getColor() + this.getName());
+
+		for (int i = 0; i < this.inventory.getSize(); i++) {
+			ItemStack stack = this.inventory.getItem(i);
+
+			if (stack != null) {
+				if (i != 0 && i > 8) {
+					this.items.put(i, stack);
+				} else {
+					int newslot = (i + 36);
+					this.hotbar.put(newslot, stack);
+				}
+			}
+		}
+
 		for (Entry<Integer, ItemStack> entry : this.items.entrySet()) {
 			inv.setItem(entry.getKey(), entry.getValue());
 		}
@@ -285,17 +297,15 @@ public class OvercastPlayer {
 			}
 		}
 
+		// potions (stil working)
+
 		ItemStack potions = new ItemStack(Material.GLASS_BOTTLE);
 		ItemMeta potionsMeta = potions.getItemMeta();
-
-		potionsMeta.setDisplayName(ChatColor.AQUA + "Potion Effects");
+		potionsMeta.setDisplayName(ChatColor.AQUA + "" + ChatColor.ITALIC + "Potion Effects");
 		List<String> effects = new ArrayList<>();
 		if (this.hasPotionEffects()) {
 			for (PotionEffect effect : this.player.getActivePotionEffects()) {
 				String name = effect.getType().getName().replaceAll("_", " ").toLowerCase();
-				String capitol = name.substring(0);
-
-				capitol.toUpperCase();
 
 				int amplifier = effect.getAmplifier();
 				String outcome = ChatColor.YELLOW + name + " " + amplifier;
@@ -303,21 +313,39 @@ public class OvercastPlayer {
 			}
 		}
 
-		if (effects.size() != 0) { 
-			 potionsMeta.setLore(effects);
+		if (effects.size() != 0) {
+			potionsMeta.setLore(effects);
 		} else {
 			potionsMeta.setLore(Arrays.asList(ChatColor.YELLOW + "No potion effects"));
 		}
 		potions.setItemMeta(potionsMeta);
-		inv.setItem(6, potions);
-		p.getPlayer().openInventory(inv);
-	}
 
-	private boolean hasOnePotionEffect() {
-		return this.player.getActivePotionEffects().size() == 1;
+		// health (need to test)
+		ItemStack healthStack = new ItemStack(Material.REDSTONE);
+		healthStack.setAmount((int) getHealth());
+		ItemMeta healthMeta = healthStack.getItemMeta();
+		healthMeta.setDisplayName(ChatColor.AQUA + "" + ChatColor.ITALIC + "Health Level");
+		healthStack.setItemMeta(healthMeta);
+
+		// hunger (need to test)
+		ItemStack hungerStack = new ItemStack(Material.COOKED_BEEF);
+		hungerStack.setAmount(this.getHungerLevel());
+		ItemMeta hungerMeta = hungerStack.getItemMeta();
+		hungerMeta.setDisplayName(ChatColor.AQUA + "" + ChatColor.ITALIC + "Hunger Level");
+		hungerStack.setItemMeta(hungerMeta);
+
+		inv.setItem(6, potions);
+		inv.setItem(7, hungerStack);
+		inv.setItem(8, healthStack);
+
+		p.getPlayer().openInventory(inv);
 	}
 
 	public void teleport(Location loc) {
 		this.player.teleport(loc);
+	}
+
+	public void setWalkSpeed(float speed) {
+		this.player.setWalkSpeed(speed);
 	}
 }

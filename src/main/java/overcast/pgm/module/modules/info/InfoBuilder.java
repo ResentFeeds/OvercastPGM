@@ -64,7 +64,7 @@ public class InfoBuilder extends Builder {
 				"contributors", "contributor");
 
 		List<Rule> rules = parseRules(root, "rules", "rule");
-
+		 
 		InfoModule info = new InfoModule(proto, name, objective, version,
 				authors, contributors, rules);
 		modules.add(info);

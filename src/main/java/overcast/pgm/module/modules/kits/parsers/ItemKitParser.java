@@ -24,11 +24,11 @@ public class ItemKitParser extends KitParser {
 	private ItemStack stack;
 	private Map<Enchantment, Integer> enchantments;
 	private ItemMeta meta;
-
+    
 	private Material[] grenadables = new Material[] { Material.SNOW_BALL, Material.ARROW, Material.ENDER_PEARL,
 			Material.FIREBALL };
 
-	/** fix enchantments and durability */
+	/** fix enchantment and durability */
 	public ItemKitParser(Element element) {
 		super(element);
 		this.enchantments = new HashMap<Enchantment, Integer>();
@@ -66,8 +66,7 @@ public class ItemKitParser extends KitParser {
 			}
 		}
 
-		this.stack.addEnchantments(enchantments);
-
+		this.stack.addEnchantments(enchantments); 
 		this.meta.setLore(colored);
 		this.meta.setDisplayName(name);
 		this.stack.setItemMeta(this.meta);
