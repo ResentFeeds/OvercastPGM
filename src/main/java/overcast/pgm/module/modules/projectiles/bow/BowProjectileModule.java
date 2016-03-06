@@ -9,46 +9,41 @@ import overcast.pgm.module.Module;
 import overcast.pgm.module.modules.kits.PotionKit;
 
 public class BowProjectileModule extends Module {
- 
+
 	EntityType type;
 	double velocity;
 	PotionKit potion;
-	
-	public BowProjectileModule(EntityType type, double velocity, PotionKit potion) { 
+
+	public BowProjectileModule(EntityType type, double velocity, PotionKit potion) {
 		this.type = type;
 		this.velocity = velocity;
 		this.potion = potion;
 	}
-	
-	
+
 	@Override
 	public MatchModule createMatchModule(Match match) {
 		return new BowProjectileMatchModule(match, this);
 	}
-	
-	
-	public boolean hasPotion(){
+
+	public boolean hasPotion() {
 		return getPotionKit() != null;
 	}
-	
-	
-	public EntityType getEntityType(){
+
+	public EntityType getEntityType() {
 		return this.type;
 	}
-	
-	
-	public double getVelocity(){
+
+	public double getVelocity() {
 		return this.velocity;
 	}
-	
-	
-	public PotionKit getPotionKit(){
+
+	public PotionKit getPotionKit() {
 		return this.potion;
 	}
-	
+
 	@Override
-	public Class<? extends Builder> builder() { 
+	public Class<? extends Builder> builder() {
 		return BowProjectileBuilder.class;
 	}
-	
+
 }

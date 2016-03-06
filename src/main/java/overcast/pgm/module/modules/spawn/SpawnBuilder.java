@@ -47,15 +47,17 @@ public class SpawnBuilder extends Builder {
 									: null;
 
 							Region region = child.hasAttribute("region") ? rc.get(child.getAttribute("region")) : null;
-//							String outcome = region != null ? "not null" : "null";
-//							Log.info(outcome);
+							// String outcome = region != null ? "not null" :
+							// "null";
+							// Log.info(outcome);
 							spawns.add(new Spawn(team, region, kit));
 							break;
-						} 
+						}
 					}
 				}
 
-				//System.out.println("there are " + i + "spawn" + (i != 0 && i > 1 ? "s" : ""));
+				// System.out.println("there are " + i + "spawn" + (i != 0 && i
+				// > 1 ? "s" : ""));
 
 				Element defaultE = XMLUtils.getUniqueChild(spawnsElement, "default");
 				if (defaultE != null) {
@@ -64,7 +66,11 @@ public class SpawnBuilder extends Builder {
 					SpawnModule spawnModule = new SpawnModule(spawns, def);
 					modules.add(spawnModule);
 				} else {
-					// THROW A MESSAGE
+					try {
+						throw new SpawnException("no default spawn found!");
+					} catch (SpawnException e) { 
+						e.printStackTrace();
+					}
 				}
 			}
 		}

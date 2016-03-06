@@ -32,8 +32,7 @@ public class Spawn {
 		return this.kit;
 	}
 
-	
-	//FIX SPAWNS
+	// FIX SPAWNS
 	public void teleport(OvercastPlayer p) {
 		if (this.region == null)
 			return;
@@ -44,7 +43,7 @@ public class Spawn {
 			BlockRegion block = (BlockRegion) region;
 			p.teleport(LocationUtils.convertVectorToLocation(block.getVector()));
 		}
-		
+
 		if (this.kit != null) {
 			KitModule kit = this.getKit();
 			kit.applyKit(p);

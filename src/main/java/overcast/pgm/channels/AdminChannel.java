@@ -18,8 +18,7 @@ public class AdminChannel extends PrivateChannel {
 		String name = player.getName();
 		if (player.hasNickname()) {
 			name = player.getNickname();
-		}
-
+		} 
 		String prefix = "[Admin]";
 
 		Team team = player.getTeam();

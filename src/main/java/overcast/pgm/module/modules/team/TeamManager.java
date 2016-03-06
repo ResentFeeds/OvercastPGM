@@ -9,8 +9,11 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
+import overcast.pgm.match.MatchHandler;
 import overcast.pgm.module.modules.spawn.Spawn;
+import overcast.pgm.module.modules.tutorial.TutorialModule;
 import overcast.pgm.player.OvercastPlayer;
 import overcast.pgm.util.LocationUtils;
 import overcast.pgm.util.TeamUtil;
@@ -48,12 +51,29 @@ public class TeamManager {
 						pickerMeta.setLore(Arrays.asList(ChatColor.DARK_PURPLE + "Join the game!"));
 						picker.setItemMeta(pickerMeta);
 						player.getInventory().setItem(1, picker);
+
+						ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 0, (byte) 3);
+						SkullMeta headMeta = (SkullMeta) head.getItemMeta();
+						headMeta.setOwner(p.getName());
+						headMeta.setDisplayName(ChatColor.RED + "Teleporter");
+						head.setItemMeta(headMeta);
+
+						player.getInventory().setItem(2, head);
+						
+						
+					   boolean loaded = MatchHandler.getMatchHandler().getMatch().getModules().isModuleLoaded(TutorialModule.class);
+					   
+					   if(loaded){
+					   ItemStack stack = p.getItem();
+					   player.getInventory().setItem(3, stack);
+					   }
 					}
 				}
 			}
 			continue;
 		}
-
+		 
+		
 		newTeam.addMember(player.getUniqueId());
 
 		String name = p.hasNickname() ? p.getNickname() : p.getName();

@@ -10,6 +10,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
@@ -20,6 +21,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import overcast.pgm.module.modules.kits.ArmorType;
+import overcast.pgm.module.modules.projectiles.custom.ActionType;
 import overcast.pgm.xml.InvalidXMLException;
 import overcast.pgm.xml.XMLParseException;
 
@@ -133,6 +135,24 @@ public class XMLUtils {
 		return null;
 	}
 
+	public static List<Element> getUniqueChildren(Element parent, String text) {
+		List<Element> children = new ArrayList<>();
+		if (parent != null) {
+
+			Element child = getChildElement(parent, text);
+
+			for (Element element : getChildElements(parent)) {
+				if (element != null) {
+					if (element.getTagName().equals(child.getTagName())) {
+						children.add(element);
+					}
+				}
+			}
+		}
+
+		return children;
+	}
+
 	public static List<Element> getElements(Element parent, String text) {
 		List<Element> matching = new ArrayList<>();
 		Element element = getUniqueChild(parent, text);
@@ -230,24 +250,51 @@ public class XMLUtils {
 	}
 
 	public static DyeColor parseDyeColor(String text) {
-		for (DyeColor dye : DyeColor.values()) {
-			String name = StringUtils.getName(dye.name());
-			if (text.equals(name)) {
-				return dye;
-			}
-		}
-
-		return DyeColor.WHITE;
+		String name = text.replace(" ", "_").toUpperCase();
+		return DyeColor.valueOf(name);
 	}
 
 	public static Environment parseDimension(Element element) {
-		  String text = element.getTextContent();
-		  for(Environment dimension : Environment.values()){
-			  String name = StringUtils.getName(dimension.name());
-			  if(text.equalsIgnoreCase(name)){
+		String text = element.getTextContent();
+		for (Environment dimension : Environment.values()) {
+			String name = StringUtils.getName(dimension.name());
+			if (text.equalsIgnoreCase(name)) {
 				return dimension;
 			}
 		}
+		return null;
+	}
+
+	public static List<Action> parseAction(String attribute) {
+		List<Action> acts = new ArrayList<>();
+
+		if (attribute != null) {
+			switch (attribute) {
+			case "right":
+				acts.add(Action.RIGHT_CLICK_AIR);
+				acts.add(Action.RIGHT_CLICK_BLOCK);
+				break;
+			case "left":
+				acts.add(Action.LEFT_CLICK_AIR);
+				acts.add(Action.LEFT_CLICK_BLOCK);
+				break;
+			case "both":
+				acts.add(Action.RIGHT_CLICK_AIR);
+				acts.add(Action.RIGHT_CLICK_BLOCK);
+				acts.add(Action.LEFT_CLICK_AIR);
+				acts.add(Action.LEFT_CLICK_BLOCK);
+			}
+		}
+		return acts;
+	}
+
+	public static ActionType parseActionType(String attribute) {
+		for (ActionType actType : ActionType.values()) {
+			if (actType.name().toLowerCase().equalsIgnoreCase(attribute)) {
+				return actType;
+			}
+		}
+
 		return null;
 	}
 }

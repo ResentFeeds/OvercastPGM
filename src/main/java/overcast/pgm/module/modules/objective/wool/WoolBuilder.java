@@ -33,7 +33,8 @@ public class WoolBuilder extends Builder {
 		if (woolNode != null) {
 			if (woolNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element woolElement = (Element) woolNode;
-				for (Element wool : XMLUtils.getElements(woolElement, "wool")) {
+				
+			    for(Element wool : XMLUtils.getUniqueChildren(woolElement, "wool")){
 					if (wool != null) {
 						if (wool.hasAttribute("team")) {
 							team = TeamUtil.getTeamByID(wool.getAttribute("team"));
@@ -45,14 +46,15 @@ public class WoolBuilder extends Builder {
 						DyeColor color = XMLUtils.parseDyeColor(wool.getAttribute("color"));
 						
 						BlockRegion region = (BlockRegion) context.get(wool.hasAttribute("monument") ? wool.getAttribute("monument") : null);
-						
-				
-						WoolObjective woolOBJ = new WoolObjective(wool.hasAttribute("id") ? wool.getAttribute("id") : null, team, color, region);
+						boolean required = wool.hasAttribute("required") ? XMLUtils.parseBoolean(wool.getAttribute("required")) : true;
+						String id = wool.hasAttribute("id") ? wool.getAttribute("id") : null;
+						WoolObjective woolOBJ = new WoolObjective(id, required, team, color, region);
 					    modules.add(woolOBJ);
 					}
 				}
-			}
+			} 
 		}
+			
 		return modules;
 	}
 

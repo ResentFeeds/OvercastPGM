@@ -9,10 +9,10 @@ import overcast.pgm.match.Match;
 import overcast.pgm.module.MatchModule;
 import overcast.pgm.player.OvercastPlayer;
 
-public class FriendlyFireMatchModule extends MatchModule implements Listener  {
+public class FriendlyFireMatchModule extends MatchModule implements Listener {
 
 	/** Not tested */
-	
+
 	boolean friendlyfire;
 	boolean friendlyfirerefund;
 
@@ -24,38 +24,35 @@ public class FriendlyFireMatchModule extends MatchModule implements Listener  {
 
 	@Override
 	public void load() {
-		 match.registerEvents(this);
+		match.registerEvents(this);
 	}
 
 	@Override
-	public void unload() { 
+	public void unload() {
 	}
 
 	@Override
-	public void enable() { 
+	public void enable() {
 	}
 
 	@Override
-	public void disable() { 
+	public void disable() {
 	}
-	
+
 	@EventHandler
-	public void onPlayer(EntityDamageByEntityEvent event){
-		 Entity entity = event.getEntity();
-		 Entity damager = event.getDamager();
-		 if(damager instanceof Player && entity instanceof Player){
-			 Player Dplayer = (Player) damager;
-			 Player KPlayer = (Player) entity;
-			 OvercastPlayer ODplayer = OvercastPlayer.getPlayers(Dplayer);
-			 OvercastPlayer OKplayer = OvercastPlayer.getPlayers(KPlayer);
-			 
-			 
-			 if((!this.friendlyfire) && ODplayer.getTeam() == OKplayer.getTeam()){
-				 event.setCancelled(true);
-			 }else{
-				 event.setCancelled(false);
-			 }
-		 }
+	public void onPlayer(EntityDamageByEntityEvent event) {
+		Entity entity = event.getEntity();
+		Entity damager = event.getDamager();
+		if (damager instanceof Player && entity instanceof Player) {
+			Player Dplayer = (Player) damager;
+			Player KPlayer = (Player) entity;
+			OvercastPlayer ODplayer = OvercastPlayer.getPlayers(Dplayer);
+			OvercastPlayer OKplayer = OvercastPlayer.getPlayers(KPlayer);
+
+			if (ODplayer.getTeam() == OKplayer.getTeam()) {
+				event.setCancelled(true);
+			}
+		}
 	}
 
 }

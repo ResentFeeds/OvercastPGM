@@ -89,6 +89,7 @@ public class ArmorKitParser extends KitParser {
 		} 
 		return false;
 	}
+	 
 
 	public ItemStack getItemStack() {
 		return this.stack;

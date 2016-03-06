@@ -3,7 +3,6 @@ package overcast.pgm.module.modules.info;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -11,7 +10,6 @@ import overcast.pgm.builder.Builder;
 import overcast.pgm.module.Module;
 import overcast.pgm.module.ModuleInfo;
 import overcast.pgm.util.BukkitUtils;
-import overcast.pgm.util.MojangUtils;
 
 @ModuleInfo(name = "info", desc = "info about the map")
 public class InfoModule extends Module {
@@ -25,13 +23,11 @@ public class InfoModule extends Module {
 	private Version proto;
 
 	private HashMap<String, String> names;
-	private HashMap<String, String> contributorNames;
-	 
-
 	/** authors names clearing */
+	private HashMap<String, String> contributorNames;
 
 	public InfoModule(Version proto, String name, String objective, Version version, List<Author> authors,
-			List<Contributor> contributors, List<Rule> rules) { 
+			List<Contributor> contributors, List<Rule> rules) {
 		this.names = new HashMap<>();
 		this.contributorNames = new HashMap<>();
 		this.proto = proto;
@@ -43,27 +39,36 @@ public class InfoModule extends Module {
 		this.rules = rules;
 
 		addAuthorNames();
-		
-		//addContributorNames();
+
+		addContributorNames();
 	}
 
 	/** make this work on the loaded maps page */
 
 	public void addAuthorNames() {
 		for (Author author : this.authors) {
-			String name = MojangUtils.getNameByUUID(author.getUUID());
+			String name = author.getName();
 			this.names.put(name, author.hasContribution() ? author.getContribution() : null);
 		}
 	}
 
+	/** make this work on the loaded maps page */
 	public void addContributorNames() {
 		if (hasContributors()) {
-			for (Contributor contrib : this.contributors) {
-				String name = MojangUtils.getContributorNameByUUID(contrib.getUUID());
-
-				this.contributorNames.put(name, contrib.getContribution() != null ? contrib.getContribution() : null);
+			for (Contributor contributor : this.contributors) {
+				String name = contributor.getName();
+				this.contributorNames.put(name, contributor.hasContribution() ? contributor.getContribution() : null);
 			}
 		}
+	}
+
+	public String getAuthor(String name) {
+		for (Entry<String, String> entries : this.names.entrySet()) {
+			if (entries.getKey().equals(entries)) {
+				return name;
+			}
+		}
+		return null;
 	}
 
 	public void clearContributorNames() {
@@ -107,6 +112,15 @@ public class InfoModule extends Module {
 	public boolean isAuthor(Player player) {
 		for (Author author : this.getAuthors()) {
 			if (author.getUUID().equals(player.getUniqueId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isAuthor(String name) {
+		for (Entry<String, String> author : this.names.entrySet()) {
+			if (author.getKey().equals(name) && author != null) {
 				return true;
 			}
 		}
@@ -163,16 +177,34 @@ public class InfoModule extends Module {
 		}
 
 		if (hasContributors()) {
-			p.sendMessage(new String[] { ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Contributors: " });
-			for (Entry<String, String> contributors : this.contributorNames.entrySet()) {
-				String key = "* " + ChatColor.RED + contributors.getKey();
+			if (contributors.size() == 1) { 
+				p.sendMessage(new String[] { ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Author: " + ChatColor.RED
+						+ this.contributorNames.keySet().toArray()[0] });
+			} else {
+				p.sendMessage(new String[] { ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Contributors: " });
+				for (Entry<String, String> contributors : this.contributorNames.entrySet()) {
+					String key = "* " + ChatColor.RED + contributors.getKey();
 
-				if (contributors.getValue() != null) {
-					key += ChatColor.GREEN + " (" + contributors.getValue() + ")";
+					if (contributors.getValue() != null) {
+						key += ChatColor.GREEN + " (" + contributors.getValue() + ")";
+					}
+
+					p.sendMessage(key);
 				}
-
-				p.sendMessage(key);
 			}
 		}
-	} 
+
+		if (hasRules()) {
+			p.sendMessage(new String[] { ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Rules: " });
+			int i = 0;
+			for (Rule r : this.rules) {
+				String rule = (++i) + ") " + ChatColor.GOLD + r.getRule();
+				p.sendMessage(rule);
+			}
+		}
+	}
+
+	public boolean hasRules() {
+		return this.rules.size() > 0;
+	}
 }

@@ -8,7 +8,8 @@ import overcast.pgm.builder.Builder;
 import overcast.pgm.match.Match;
 import overcast.pgm.module.MatchModule;
 import overcast.pgm.module.Module;
-
+import overcast.pgm.module.ModuleInfo;
+@ModuleInfo(name = "item remove")
 public class ItemRemoveModule extends Module {
 
 	private List<Material> removed;

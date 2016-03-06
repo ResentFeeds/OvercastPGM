@@ -56,8 +56,7 @@ public class ChatCommands {
 			Player p = (Player) sender;
 			OvercastPlayer player = OvercastPlayer.getPlayers(p);
 			AdminChannel channel = ChannelUtil.getAdminChannel();
-			if (player.hasPermssion(channel.getPermssion())
-					|| player.isOperator()) {
+			if (channel.check(player)) {
 				if (args.argsLength() == 0) {
 					if (player.hasChannel()) {
 						Channel current = player.getChannel();
@@ -86,8 +85,7 @@ public class ChatCommands {
 				}
 			} else {
 				MessageUtils.warningMessage(p.getPlayer(), ChatColor.RED
-						+ "You need to be op or you need the permssion "
-						+ channel.getPermssion().getName());
+						+ "You need to be op or you need the permssion " + channel.getPermssion().getName());
 			}
 		}
 	}
@@ -96,8 +94,7 @@ public class ChatCommands {
 	public static void t(final CommandContext args, CommandSender sender) {
 		if (sender instanceof Player) {
 			OvercastPlayer player = OvercastPlayer.getPlayers((Player) sender);
-			TeamChannel teamChannel = (TeamChannel) ChannelUtil
-					.getTeamChannel();
+			TeamChannel teamChannel = (TeamChannel) ChannelUtil.getTeamChannel();
 			if (args.argsLength() == 0) {
 				if (player.hasChannel()) {
 					Channel channel = player.getChannel();
@@ -121,8 +118,7 @@ public class ChatCommands {
 					for (UUID uuid : team.getMembers()) {
 						Player member = Bukkit.getPlayer(uuid);
 						if (member != null) {
-							member.sendMessage(teamChannel.format(player,
-									message));
+							member.sendMessage(teamChannel.format(player, message));
 						}
 					}
 				}

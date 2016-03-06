@@ -63,6 +63,7 @@ public class CubeCommand {
 			}
 		}
 	}
+	
 	@Command(aliases = "filters", desc = "a filters command")
 	public static void filters(final CommandContext args, CommandSender sender) {
 		if (sender instanceof Player) {

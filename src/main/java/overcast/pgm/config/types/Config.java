@@ -2,12 +2,11 @@ package overcast.pgm.config.types;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.YamlConfigurationOptions;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import overcast.pgm.channels.Channel;
 import overcast.pgm.channels.ChannelFactory;
@@ -19,8 +18,9 @@ public class Config extends OvercastConfig {
 
 	ServerType type;
 	Channel def;
-
-	Map<Integer, ItemStack> items = new HashMap<>();
+	//TODO 
+	HashMap<DamageCause, String> messages = new HashMap<>();
+	
 
 	public Config(String name) {
 		super(name);
@@ -48,7 +48,7 @@ public class Config extends OvercastConfig {
 			if (!hasString(channel, "default")) {
 				channel.set("default", "Global");
 			}
-		}   
+		}  
 
 		options.copyHeader(true);
 		try {
@@ -71,10 +71,11 @@ public class Config extends OvercastConfig {
 
 	public Channel getDefaultChannel() {
 		return this.def;
-	} 
-	
-	
-	public Map<Integer, ItemStack> getItems(){
-		return this.items;
 	}
+
+	public HashMap<DamageCause, String> getMessages() {
+		return this.messages;
+	}
+	
+	 
 }

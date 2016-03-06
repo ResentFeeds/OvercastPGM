@@ -17,6 +17,7 @@ import overcast.pgm.module.modules.maxheight.MaxBuildHeightBuilder;
 import overcast.pgm.module.modules.objective.wool.WoolBuilder;
 import overcast.pgm.module.modules.observers.ObserverBuilder;
 import overcast.pgm.module.modules.projectiles.bow.BowProjectileBuilder;
+import overcast.pgm.module.modules.projectiles.custom.ProjectileBuilder;
 import overcast.pgm.module.modules.region.RegionBuilder;
 import overcast.pgm.module.modules.spawn.SpawnBuilder;
 import overcast.pgm.module.modules.team.TeamBuilder;
@@ -31,6 +32,7 @@ public class BuilderRegistry {
 
 
 	List<Class<? extends Builder>> builderClasses;
+	 
 
 	public BuilderRegistry() { 
 		this.builderClasses = new ArrayList<>();
@@ -54,16 +56,18 @@ public class BuilderRegistry {
 		addBuilder(RegionBuilder.class);
 		addBuilder(TNTTrackerBuilder.class);
 		addBuilder(BowProjectileBuilder.class);
-		addBuilder(TutorialBuilder.class);
+		addBuilder(TutorialBuilder.class); // need to work on
 		addBuilder(ItemRemoveBuilder.class);
+		addBuilder(KillRewardBuilder.class);
 		addBuilder(ArmorKeepBuilder.class);
 		addBuilder(ItemKeepBuilder.class);
 		addBuilder(KillRewardBuilder.class);
 		addBuilder(ToolRepairBuilder.class);
 		addBuilder(TimeBuilder.class);
-		addBuilder(BroadcastBuilder.class);
-	    addBuilder(SpawnBuilder.class);
-		addBuilder(WoolBuilder.class);
+		addBuilder(BroadcastBuilder.class); // need to work on
+	    addBuilder(SpawnBuilder.class); // need to work on
+	    addBuilder(ProjectileBuilder.class); // need to work on 
+		addBuilder(WoolBuilder.class); // need to work on
 	}
 
 

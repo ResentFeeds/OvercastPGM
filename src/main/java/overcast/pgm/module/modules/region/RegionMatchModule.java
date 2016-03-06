@@ -11,8 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import com.google.common.collect.ArrayListMultimap;
-
 import overcast.pgm.match.Match;
 import overcast.pgm.module.MatchModule;
 import overcast.pgm.module.modules.kits.KitModule;

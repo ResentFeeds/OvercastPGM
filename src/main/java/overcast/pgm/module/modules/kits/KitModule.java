@@ -53,7 +53,7 @@ public class KitModule extends Module {
 
 	@Override
 	public MatchModule createMatchModule(Match match) {
-		return new KitMatchModule(match, this.armor);
+		return new KitMatchModule(match, this.armor, this.items);
 	}
 
 	public String getID() {
@@ -121,7 +121,7 @@ public class KitModule extends Module {
 		GamemodeKit gamemode = this.getGamemodeKit();
 		gamemode.apply(p);
 
-		if (clear) {
+		if (clear || force) {
 			p.getInventory().setArmorContents(null);
 		}
 
@@ -161,20 +161,20 @@ public class KitModule extends Module {
 
 		for (ArmorKit armor : getArmor()) {
 			switch (armor.getArmorType()) {
-			case HELMET:
+			case HELMET: 
 				p.getInventory().setHelmet(armor.getStack());
 				break;
-			case CHESTPLATE:
+			case CHESTPLATE: 
 				p.getInventory().setChestplate(armor.getStack());
 				break;
-			case LEGGINGS:
+			case LEGGINGS: 
 				p.getInventory().setLeggings(armor.getStack());
 				break;
-			case BOOTS:
+			case BOOTS: 
 				p.getInventory().setBoots(armor.getStack());
 				break;
 			}
 		}
-
 	}
+
 }

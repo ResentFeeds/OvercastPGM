@@ -2,8 +2,9 @@ package overcast.pgm.channels;
 
 import org.bukkit.permissions.Permission;
 
+import overcast.pgm.player.OvercastPlayer;
 
-public abstract class PrivateChannel extends Channel{
+public abstract class PrivateChannel extends Channel {
 
 	Permission permission;
 
@@ -11,9 +12,18 @@ public abstract class PrivateChannel extends Channel{
 		super(name);
 		this.permission = permission;
 	}
-	
-	
-	public Permission getPermssion(){
+
+	public Permission getPermssion() {
 		return this.permission;
+	}
+
+	public boolean check(OvercastPlayer overcast) {
+		if (overcast != null) {
+			if (overcast.hasPermssion(this.permission) || overcast.isOperator()) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

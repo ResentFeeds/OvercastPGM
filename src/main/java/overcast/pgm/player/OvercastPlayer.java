@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -83,15 +84,27 @@ public class OvercastPlayer {
 
 		return null;
 	}
-	
-	
+
+	public void closeInventory() {
+		this.player.closeInventory();
+	}
 
 	public static OvercastPlayer getPlayers(String name) {
-		for(OvercastPlayer players : getPlayers()){
-			if(players.getName().equals(name)){
+		for (OvercastPlayer players : getPlayers()) {
+			if (players.getName().equals(name)) {
 				return players;
 			}
 		}
+		return null;
+	}
+
+	public static OvercastPlayer getPlayer(String string) {
+		for (OvercastPlayer players : getPlayers()) {
+			if (players.getName().equals(string)) {
+				return players;
+			}
+		}
+
 		return null;
 	}
 
@@ -256,7 +269,7 @@ public class OvercastPlayer {
 		Match match = OvercastPGM.getInstance().getMatch();
 		TutorialModule tutorial = match.getModules().getModule(TutorialModule.class);
 
-		return tutorial.createItem(getTutorialStage());
+		return tutorial.createItem(null);
 	}
 
 	// work on potions and auto updating when a player views another players
@@ -283,8 +296,8 @@ public class OvercastPlayer {
 		for (Entry<Integer, ItemStack> entry : this.items.entrySet()) {
 			inv.setItem(entry.getKey(), entry.getValue());
 		}
-
 		for (Entry<Integer, ItemStack> entry : this.hotbar.entrySet()) {
+
 			inv.setItem(entry.getKey(), entry.getValue());
 		}
 
@@ -337,8 +350,11 @@ public class OvercastPlayer {
 		inv.setItem(6, potions);
 		inv.setItem(7, hungerStack);
 		inv.setItem(8, healthStack);
+		p.openInventory(inv); 
+	}
 
-		p.getPlayer().openInventory(inv);
+	public void updateInventory() {
+		this.player.updateInventory();
 	}
 
 	public void teleport(Location loc) {
@@ -347,5 +363,17 @@ public class OvercastPlayer {
 
 	public void setWalkSpeed(float speed) {
 		this.player.setWalkSpeed(speed);
+	}
+
+	public void openInventory(Inventory inv) {
+		this.player.openInventory(inv);
+	}
+
+	public Location getLocation() {
+		return this.player.getLocation();
+	}
+
+	public InventoryView getOpenInventory() {
+		return this.player.getOpenInventory();
 	}
 }

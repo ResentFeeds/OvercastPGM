@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -36,11 +35,9 @@ public class InfoBuilder extends Builder {
 			}
 		}
 
-		String name = root.getElementsByTagName("name").item(0)
-				.getTextContent();
+		String name = root.getElementsByTagName("name").item(0).getTextContent();
 
-		String objective = root.getElementsByTagName("objective").item(0)
-				.getTextContent();
+		String objective = root.getElementsByTagName("objective").item(0).getTextContent();
 
 		Version version = null;
 		try {
@@ -53,27 +50,23 @@ public class InfoBuilder extends Builder {
 
 		if (authors.size() == 0) {
 			try {
-				throw new XMLParseException(
-						"At least one map author is required.");
+				throw new XMLParseException("At least one map author is required.");
 			} catch (XMLParseException e) {
 				e.printStackTrace();
 			}
 		}
 
-		List<Contributor> contributors = parseContributors(root,
-				"contributors", "contributor");
+		List<Contributor> contributors = parseContributors(root, "contributors", "contributor");
 
 		List<Rule> rules = parseRules(root, "rules", "rule");
-		 
-		InfoModule info = new InfoModule(proto, name, objective, version,
-				authors, contributors, rules);
+
+		InfoModule info = new InfoModule(proto, name, objective, version, authors, contributors, rules);
 		modules.add(info);
 
 		return modules;
 	}
 
-	private Version parseVersion(Element root, String versionTag)
-			throws XMLParseException {
+	private Version parseVersion(Element root, String versionTag) throws XMLParseException {
 		Node node = root.getElementsByTagName(versionTag).item(0);
 		if (node == null) {
 			throw new XMLParseException("<version> -- tag missing on a map");
@@ -88,19 +81,15 @@ public class InfoBuilder extends Builder {
 	private List<Rule> parseRules(Element root, String rulesTag, String ruleTag) {
 		List<Rule> rules = new ArrayList<>();
 		Node rulesNode = root.getElementsByTagName(rulesTag).item(0);
-		if (rulesNode == null) {
-			rules.add(new Rule(ChatColor.RED + "No Rules"));
-		} else {
+		if (rulesNode != null) {
 			if (rulesNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element rulesElement = (Element) rulesNode;
 				NodeList rulesList = rulesElement.getChildNodes();
 				for (int i = 0; i < rulesList.getLength(); i++) {
 					Node ruleNode = rulesList.item(i);
-					if (ruleNode.getNodeType() == Node.ELEMENT_NODE
-							&& ruleNode.getNodeName().equals(ruleTag)) {
+					if (ruleNode.getNodeType() == Node.ELEMENT_NODE && ruleNode.getNodeName().equals(ruleTag)) {
 						Element ruleElement = (Element) ruleNode;
-						String ruleText = BukkitUtils.colorize(ruleElement
-								.getTextContent());
+						String ruleText = BukkitUtils.colorize(ruleElement.getTextContent());
 						rules.add(new Rule(ruleText));
 					}
 				}
@@ -109,8 +98,7 @@ public class InfoBuilder extends Builder {
 		return rules;
 	}
 
-	private List<Author> parseAuthors(Element root, String authorsTag,
-			String authorTag) {
+	private List<Author> parseAuthors(Element root, String authorsTag, String authorTag) {
 		List<Author> authors = new ArrayList<>();
 		Node authorsNode = root.getElementsByTagName(authorsTag).item(0);
 		if (authorsNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -121,14 +109,12 @@ public class InfoBuilder extends Builder {
 			for (int i = 0; i < authorList.getLength(); i++) {
 				Node node = authorList.item(i);
 
-				if (node.getNodeType() == Node.ELEMENT_NODE
-						&& node.getNodeName().equals(authorTag)) {
+				if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals(authorTag)) {
 					Element element = (Element) node;
 
 					String contribution = null;
 
-					UUID uuid = MojangUtils.getUUID(element
-							.getAttribute("uuid"));
+					UUID uuid = MojangUtils.getUUID(element.getAttribute("uuid"));
 
 					if (element.hasAttribute("contribution")) {
 						contribution = element.getAttribute("contribution");
@@ -142,8 +128,7 @@ public class InfoBuilder extends Builder {
 		return authors;
 	}
 
-	public List<Contributor> parseContributors(Element root,
-			String contribsTag, String contribTag) {
+	public List<Contributor> parseContributors(Element root, String contribsTag, String contribTag) {
 		List<Contributor> contributors = new ArrayList<>();
 		Node authorsNode = root.getElementsByTagName(contribsTag).item(0);
 		if (authorsNode != null) {
@@ -155,14 +140,12 @@ public class InfoBuilder extends Builder {
 				for (int i = 0; i < authorList.getLength(); i++) {
 					Node node = authorList.item(i);
 
-					if (node.getNodeType() == Node.ELEMENT_NODE
-							&& node.getNodeName().equals(contribTag)) {
+					if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals(contribTag)) {
 						Element element = (Element) node;
 
 						String contribution = null;
 
-						UUID uuid = MojangUtils.getUUID(element
-								.getAttribute("uuid"));
+						UUID uuid = MojangUtils.getUUID(element.getAttribute("uuid"));
 
 						if (element.hasAttribute("contribution")) {
 							contribution = element.getAttribute("contribution");

@@ -24,7 +24,7 @@ public class TutorialStage {
 	}
 
 	public TutorialStage(TutorialStageParser parser) {
-		this(parser.getTitle(), parser.getMessage(), null);
+		this(parser.getTitle(), parser.getMessage(), parser.getPointProvider());
 	}
 
 	public String getTitle() {
@@ -45,7 +45,9 @@ public class TutorialStage {
 
 		if (this.teleport != null) {
 			Location teleport = LocationUtils.convertVectorToLocation(getTeleport().getPoint());
-			if (teleport != null) {
+			if (teleport != null) { 
+				teleport.setYaw(getTeleport().getYaw());
+				teleport.setPitch(getTeleport().getPitch()); 
 				player.teleport(teleport);
 				player.setFlying(true);
 			} else {

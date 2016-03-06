@@ -1,10 +1,12 @@
 package overcast.pgm.module.modules.observers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Furnace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,21 +16,22 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerPickupExperienceEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+
 import overcast.pgm.match.Match;
 import overcast.pgm.module.MatchModule;
 import overcast.pgm.module.modules.team.Team;
@@ -36,6 +39,7 @@ import overcast.pgm.module.modules.team.TeamManager;
 import overcast.pgm.player.OvercastPlayer;
 import overcast.pgm.util.TeamPicker;
 import overcast.pgm.util.TeamUtil;
+import overcast.pgm.util.Teleporter;
 
 public class ObserverMatchModule extends MatchModule implements Listener {
 
@@ -151,16 +155,54 @@ public class ObserverMatchModule extends MatchModule implements Listener {
 					event.setCancelled(true);
 					TeamPicker picker = new TeamPicker(this.match);
 					Inventory inventory = picker.teamPickerView();
-					player.getPlayer().openInventory(inventory);
+					player.openInventory(inventory);
 				}
 			}
 
-			if (is.getType() == Material.EXP_BOTTLE && a == Action.RIGHT_CLICK_AIR || a == Action.RIGHT_CLICK_BLOCK) {
+			if (is.getType().equals(Material.EXP_BOTTLE) && a == Action.RIGHT_CLICK_AIR
+					|| a == Action.RIGHT_CLICK_BLOCK) {
 				event.setCancelled(true);
 			}
+
+			if (is.getType().equals(Material.SKULL_ITEM) && is.hasItemMeta()) {
+				if (a == Action.LEFT_CLICK_AIR || a == Action.RIGHT_CLICK_AIR || a == Action.RIGHT_CLICK_BLOCK
+						|| a == Action.LEFT_CLICK_BLOCK && is.getItemMeta().getDisplayName().equals("Teleporter")
+								&& is.getData().getData() == (byte) 3) {
+					event.setCancelled(true);
+					Teleporter teleporter = new Teleporter(OvercastPlayer.getPlayers());
+					teleporter.viewInventory(player);
+				}
+			}
+
+			if (event.getClickedBlock() != null && !event.getPlayer().isSneaking()
+					&& event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+				if (event.getClickedBlock().getType().equals(Material.CHEST)
+						|| event.getClickedBlock().getType().equals(Material.TRAPPED_CHEST)) {
+					Inventory chest = Bukkit.createInventory(null,
+							((Chest) event.getClickedBlock().getState()).getInventory().getSize());
+					for (int i = 0; i < ((Chest) event.getClickedBlock().getState()).getInventory().getSize(); i++) {
+						chest.setItem(i, ((Chest) event.getClickedBlock().getState()).getInventory().getItem(i));
+					}
+					event.setCancelled(true);
+					player.openInventory(chest);
+				}
+			}
+
+			if (event.getClickedBlock() != null && !event.getPlayer().isSneaking()
+					&& event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+				if (event.getClickedBlock().getType().equals(Material.FURNACE)
+						|| event.getClickedBlock().getType().equals(Material.BURNING_FURNACE)) {
+					Inventory furnace = Bukkit.createInventory(null, InventoryType.FURNACE);
+					for (int i = 0; i < ((Furnace) event.getClickedBlock().getState()).getInventory().getSize(); i++) {
+						furnace.setItem(i, ((Furnace) event.getClickedBlock().getState()).getInventory().getItem(i));
+					}
+					event.setCancelled(true);
+					player.openInventory(furnace);
+				}
+			}
 		}
-	} 
-	
+	}
+
 	@EventHandler
 	public void onInventoryClose(InventoryCloseEvent event) {
 		OvercastPlayer p = OvercastPlayer.getPlayers((Player) event.getPlayer());
@@ -212,16 +254,16 @@ public class ObserverMatchModule extends MatchModule implements Listener {
 
 	@EventHandler
 	public void onProjectile(ProjectileLaunchEvent event) {
-		if(event.getEntity().getShooter() instanceof HumanEntity){
-			 HumanEntity human = (HumanEntity) event.getEntity().getShooter();
-			 
-			 if(human instanceof Player){
-				 Player player = (Player) human;
-				 OvercastPlayer p = OvercastPlayer.getPlayers(player);
-				 if(p.isObserver()){
-					 event.setCancelled(true);
-				 }
-			 }
+		if (event.getEntity().getShooter() instanceof HumanEntity) {
+			HumanEntity human = (HumanEntity) event.getEntity().getShooter();
+
+			if (human instanceof Player) {
+				Player player = (Player) human;
+				OvercastPlayer p = OvercastPlayer.getPlayers(player);
+				if (p.isObserver()) {
+					event.setCancelled(true);
+				}
+			}
 		}
 	}
 
@@ -243,10 +285,10 @@ public class ObserverMatchModule extends MatchModule implements Listener {
 			Player p = (Player) event.getWhoClicked();
 			OvercastPlayer player = OvercastPlayer.getPlayers(p);
 			if (player.isObserver()) {
+				// picker inventory
 				if (ChatColor.stripColor(event.getInventory().getName()).equalsIgnoreCase("Pick your team")) {
 					if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR) {
 						return; // if it is nothing or air, stop the code here..
-
 					} else if (event.getCurrentItem().getType().equals(Material.EYE_OF_ENDER)) {
 						event.setCancelled(true);
 						p.closeInventory();
@@ -265,12 +307,34 @@ public class ObserverMatchModule extends MatchModule implements Listener {
 					}
 				}
 
+				// teleporter inventory
+				if (ChatColor.stripColor(event.getInventory().getName()).equals("Teleporter")) {
+					if (event.getCurrentItem().getType().equals(Material.SKULL_ITEM)
+							&& event.getCurrentItem().hasItemMeta()) {
+						OvercastPlayer overcast = OvercastPlayer
+								.getPlayer(ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName()));
+						event.setCancelled(true);
+						player.closeInventory();
+						player.teleport(overcast.getLocation());
+					}
+				}
+
 				// prevent a player from moving items from another players
 				// inventory
 				for (OvercastPlayer overcast : OvercastPlayer.getPlayers()) {
 					if (overcast != null) {
 						if (ChatColor.stripColor(event.getInventory().getName()).equalsIgnoreCase(overcast.getName())) {
 							event.setCancelled(true);
+						}
+					}
+				}
+				
+				
+				
+				if(event.getInventory().getName().equals("Furnace") || event.getInventory().getName().equals("Chest")){
+					if(event.getCurrentItem() != null){
+						if(event.getClick() == ClickType.LEFT || event.getClick() == ClickType.RIGHT){
+							 event.setCancelled(true);
 						}
 					}
 				}

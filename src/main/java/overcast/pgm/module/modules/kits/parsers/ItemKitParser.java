@@ -14,9 +14,11 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 
 import overcast.pgm.module.modules.kits.KitParser;
+import overcast.pgm.module.modules.projectiles.custom.ProjectileModule;
 import overcast.pgm.util.BukkitUtils;
 import overcast.pgm.util.NumberUtils;
 import overcast.pgm.util.XMLUtils;
+//work on projectileModule working with items to make custom projectiles :).
 
 public class ItemKitParser extends KitParser {
 
@@ -24,7 +26,8 @@ public class ItemKitParser extends KitParser {
 	private ItemStack stack;
 	private Map<Enchantment, Integer> enchantments;
 	private ItemMeta meta;
-    
+	private ProjectileModule projectile;
+
 	private Material[] grenadables = new Material[] { Material.SNOW_BALL, Material.ARROW, Material.ENDER_PEARL,
 			Material.FIREBALL };
 
@@ -32,8 +35,9 @@ public class ItemKitParser extends KitParser {
 	public ItemKitParser(Element element) {
 		super(element);
 		this.enchantments = new HashMap<Enchantment, Integer>();
-		this.slot = NumberUtils.parseInteger(element.getAttribute("slot"));
-
+		this.slot = element.hasAttribute("slot") ? NumberUtils.parseInteger(element.getAttribute("slot")) : -1;
+		this.projectile = element.hasAttribute("projectile")
+				? ProjectileModule.getProjectile(element.getAttribute("projectile")) : null;
 		String lore = element.hasAttribute("lore") ? element.getAttribute("lore") : null;
 		List<String> newLore = parseLore(lore);
 		List<String> colored = BukkitUtils.colorizeList(newLore);
@@ -43,16 +47,7 @@ public class ItemKitParser extends KitParser {
 		boolean unbreakable = element.hasAttribute("unbreakable")
 				? XMLUtils.parseBoolean(element.getAttribute("unbreakable")) : false;
 		this.stack = XMLUtils.parseItem(element.getAttribute("material"), amount, damage);
-
-		short durability = 0;
-		if (unbreakable) {
-			durability = -1500;
-		}
-
-		this.stack.setDurability(durability);
-
-		this.meta = this.stack.getItemMeta();
-
+		
 		List<Element> children = XMLUtils.getChildElements(element);
 
 		for (Element child : children) {
@@ -65,8 +60,17 @@ public class ItemKitParser extends KitParser {
 				}
 			}
 		}
+		
+		short durability = 0;
+		if (unbreakable) {
+			durability = -1500;
+		}
 
-		this.stack.addEnchantments(enchantments); 
+		this.stack.setDurability(durability);
+
+		this.meta = this.stack.getItemMeta();
+ 
+		this.stack.addEnchantments(enchantments);
 		this.meta.setLore(colored);
 		this.meta.setDisplayName(name);
 		this.stack.setItemMeta(this.meta);
@@ -105,5 +109,9 @@ public class ItemKitParser extends KitParser {
 
 	public Map<Enchantment, Integer> getEnchantments() {
 		return this.enchantments;
+	}
+
+	public ProjectileModule getProjectile() {
+		return this.projectile;
 	}
 }

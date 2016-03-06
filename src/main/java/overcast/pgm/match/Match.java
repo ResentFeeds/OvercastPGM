@@ -1,6 +1,7 @@
 package overcast.pgm.match;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
@@ -8,13 +9,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.w3c.dom.Document;
 
-import static org.bukkit.ChatColor.*;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import overcast.pgm.OvercastPGM;
+import overcast.pgm.event.MatchBeginEvent;
 import overcast.pgm.event.MatchLoadEvent;
 import overcast.pgm.generator.NullChunkGenerator;
 import overcast.pgm.map.Map;
@@ -23,14 +23,16 @@ import overcast.pgm.module.Module;
 import overcast.pgm.module.ModuleCollection;
 import overcast.pgm.module.ModuleFactory;
 import overcast.pgm.module.ModuleStage;
-import overcast.pgm.module.modules.team.Team;
+import overcast.pgm.module.modules.team.TeamManager;
 import overcast.pgm.module.modules.team.TeamModule;
 import overcast.pgm.module.modules.timelimit.TimeModule;
 import overcast.pgm.module.modules.tutorial.TutorialManager;
+import overcast.pgm.player.OvercastPlayer;
 import overcast.pgm.timer.MatchTimer;
 import overcast.pgm.timer.StartTimer;
 import overcast.pgm.util.FileUtils;
 import overcast.pgm.util.Log;
+import overcast.pgm.util.TeamUtil;
 
 public class Match {
 
@@ -69,6 +71,7 @@ public class Match {
 		this.id = id;
 		this.map = map;
 		loadMap(map, id++);
+
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			player.teleport(getWorld().getSpawnLocation());
 		}
@@ -103,7 +106,7 @@ public class Match {
 
 	public void load() {
 		this.context.load();
-		this.getPluginManager().callEvent(new MatchLoadEvent(this, this.map));
+		this.getPluginManager().callEvent(new MatchLoadEvent(this));
 	}
 
 	public void loadMap(Map map, int id) {
@@ -157,8 +160,8 @@ public class Match {
 	/** start the match */
 	public void start() {
 		setState(MatchState.RUNNING);
-		Bukkit.broadcastMessage(GREEN + "The match has started");
-
+		MatchBeginEvent event = new MatchBeginEvent(this);
+		Bukkit.getPluginManager().callEvent(event);
 		boolean loaded = this.getModules().isModuleLoaded(TimeModule.class);
 
 		if (loaded || !this.map.isObjectives()) {
@@ -169,10 +172,30 @@ public class Match {
 			this.mTimer = new MatchTimer(-1, this);
 		}
 
-		TeamModule teamModule = this.getModules().getModule(TeamModule.class); 
+		TeamModule teamModule = this.getModules().getModule(TeamModule.class);
 		if (this.mTimer != null && teamModule.hasEnoughPlayers()) {
 			this.mTimer.run();
 		}
+	}
+
+	public void end() {
+		if (this.state == MatchState.RUNNING) {
+
+			this.setState(MatchState.ENDED);
+			this.context.unload();
+
+			List<OvercastPlayer> players = OvercastPlayer.getPlayers();
+			for (OvercastPlayer player : players) {
+				if (!player.isObserver()) {
+					TeamManager.addPlayer(TeamUtil.getTeamModule().getObservers(), player);
+				}
+			}
+			Bukkit.broadcastMessage(ChatColor.RED + "The match has ended");
+		}
+	}
+
+	public boolean isStarting() {
+		return this.state == MatchState.START;
 	}
 
 	/** get the next map */
@@ -242,5 +265,9 @@ public class Match {
 
 	public ModuleCollection<Module> getModules() {
 		return this.modules;
+	}
+
+	public void broadcast(String string) {
+		Bukkit.broadcastMessage(string);
 	}
 }

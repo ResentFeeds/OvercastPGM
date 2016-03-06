@@ -39,6 +39,48 @@ public class Team {
 		this.members.add(uuid);
 	}
 
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @param color the color to set
+	 */
+	public void setColor(ChatColor color) {
+		this.color = color;
+	}
+
+	/**
+	 * @param max the max to set
+	 */
+	public void setMax(int max) {
+		this.max = max;
+	}
+
+	/**
+	 * @param overfill the overfill to set
+	 */
+	public void setOverfill(int overfill) {
+		this.overfill = overfill;
+	}
+
+	/**
+	 * @param plural the plural to set
+	 */
+	public void setPlural(boolean plural) {
+		this.plural = plural;
+	}
+
 	public String getID() {
 		return this.id;
 	}

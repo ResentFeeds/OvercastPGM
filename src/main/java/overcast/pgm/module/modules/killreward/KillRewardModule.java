@@ -1,12 +1,13 @@
 package overcast.pgm.module.modules.killreward;
 
 import java.util.List;
-
+ 
 import overcast.pgm.builder.Builder;
 import overcast.pgm.match.Match;
 import overcast.pgm.module.MatchModule;
 import overcast.pgm.module.Module;
-
+import overcast.pgm.module.ModuleInfo;
+@ModuleInfo(name = "kill reward")
 public class KillRewardModule extends Module {
 
 	private List<KillReward> rewards;
@@ -15,7 +16,6 @@ public class KillRewardModule extends Module {
 	public KillRewardModule(List<KillReward> rewards){
 		this.rewards = rewards;
 	}
-	
 	
 	@Override
 	public MatchModule createMatchModule(Match match) {

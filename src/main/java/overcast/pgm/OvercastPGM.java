@@ -2,6 +2,7 @@ package overcast.pgm;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -32,19 +33,22 @@ import overcast.pgm.commands.JoinCommand;
 import overcast.pgm.commands.KitsCommand;
 import overcast.pgm.commands.LoadedMapsCommand;
 import overcast.pgm.commands.MapCommands;
-import overcast.pgm.commands.MapInfoCommand;
-import overcast.pgm.commands.MyTeamCommand;
+import overcast.pgm.commands.MapInfoCommand; 
 import overcast.pgm.commands.NickCommand;
 import overcast.pgm.commands.RotationCommand;
+import overcast.pgm.commands.TeamCommands;
 import overcast.pgm.config.types.Config;
 import overcast.pgm.listener.ChatListener;
 import overcast.pgm.listener.ConnectionListener;
+import overcast.pgm.listener.DeathListener;
 import overcast.pgm.listener.ListenerList;
 import overcast.pgm.listener.MatchListener;
 import overcast.pgm.listener.PlayerListener;
+import overcast.pgm.map.Map;
 import overcast.pgm.map.MapLoader;
 import overcast.pgm.match.Match;
 import overcast.pgm.module.MatchModuleContext;
+import overcast.pgm.module.modules.info.InfoModule;
 import overcast.pgm.module.modules.info.Version;
 import overcast.pgm.module.modules.team.TeamManager;
 import overcast.pgm.player.OvercastPlayer;
@@ -55,6 +59,8 @@ import overcast.pgm.util.TeamUtil;
 /** make class for team handling */
 
 //TODO finish up all current Modules 
+
+// work on projectileModule, BowProjectileModule etc;
 
 //** TODO fix authors in loaded maps and rotation pages being "null"
 
@@ -156,7 +162,7 @@ public class OvercastPGM extends JavaPlugin {
 		cmdRegister.register(ChatCommands.class);
 		cmdRegister.register(RotationCommand.class);
 		cmdRegister.register(CubeCommand.class);
-		cmdRegister.register(MyTeamCommand.class);
+		cmdRegister.register(TeamCommands.class);
 		cmdRegister.register(MapInfoCommand.class);
 	}
 
@@ -195,13 +201,15 @@ public class OvercastPGM extends JavaPlugin {
 		}
 	}
 
-	public void onDisable() {
-		instance = null;
-
+	public void onDisable() { 
+		instance = null; 
 		if (getMatch() != null) {
 			if (getMatch().isRunning() || getMatch().isLoading()) { 
+				InfoModule info = getMatch().getMap().getInfo();
+				info.clearAuthorNames();
+				info.clearContributorNames();
 				MatchModuleContext context = getMatch().getContext();
-				context.disable();
+				context.disable(); 
 			}
 		}
 
@@ -252,7 +260,7 @@ public class OvercastPGM extends JavaPlugin {
 		listeners.add(new ConnectionListener());
 		listeners.add(new ChatListener());
 		listeners.add(new MatchListener());
-
+		listeners.add(new DeathListener());
 		for (Listener listener : listeners) {
 			registerListener(listener);
 		}

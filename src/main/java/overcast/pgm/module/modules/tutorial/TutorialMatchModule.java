@@ -52,7 +52,7 @@ public class TutorialMatchModule extends MatchModule implements Listener {
 	                TutorialModule module = getMatch().getModules().getModule(TutorialModule.class);
 	                if(module != null) {
 	                    TutorialStage current = player.getTutorialStage();
-
+                        
 	                    TutorialStage next = null;
 	                    switch(event.getAction()) {
 	                    case LEFT_CLICK_AIR:
@@ -67,6 +67,7 @@ public class TutorialMatchModule extends MatchModule implements Listener {
 	                        break;
 	                    }
 
+	                    
 	                    if(next != null) {
 	                        player.setTutorialStage(next);
 	                    }

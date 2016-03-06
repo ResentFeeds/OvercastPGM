@@ -20,8 +20,7 @@
 package bukkit.util;
 
 import com.sk89q.minecraft.util.commands.CommandsManager;
-import com.sk89q.util.StringUtil;
-import org.bukkit.OfflinePlayer;
+import com.sk89q.util.StringUtil; 
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;

@@ -7,7 +7,7 @@ import overcast.pgm.util.Characters;
 public enum MatchState {
 
 	LOAD(ChatColor.GOLD), START(ChatColor.GREEN), RUNNING(ChatColor.YELLOW), CYCLE(
-			ChatColor.RED);
+			ChatColor.RED), ENDED(ChatColor.DARK_RED);
 
 	private ChatColor color;
 

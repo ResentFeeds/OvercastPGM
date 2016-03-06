@@ -45,7 +45,7 @@ public class BowProjectileBuilder extends Builder {
 	private BowProjectileModule parseBowProjectile(Element element) {
 		 List<Element> children = XMLUtils.getChildElements(element);
 		 EntityType arrow = EntityType.ARROW; 
-		 double velocity = 1.0; 
+		 double velocity = 1.0;  
 		PotionKit kit = null;
 		for(Element child : children){
 			  if(child != null){ 
@@ -61,7 +61,9 @@ public class BowProjectileBuilder extends Builder {
 					  break;
 				  }
 			  }
-		 }  
+		 }
+		
+		
 		
 		return new BowProjectileModule(arrow, velocity, kit);
 	} 

@@ -2,6 +2,12 @@ package overcast.pgm.module.modules.info;
 
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+
+import overcast.pgm.util.MojangUtils;
+
 public class Author {
 
 	private UUID uuid;
@@ -26,5 +32,16 @@ public class Author {
 
 	public boolean hasContribution() {
 		return this.getContribution() != null;
+	}
+	
+	
+	public String getName(){
+		String name = MojangUtils.getNameByUUID(this.uuid);
+		if(name != null){
+		   return name;
+		}else{
+			OfflinePlayer player = Bukkit.getOfflinePlayer(this.uuid);
+			return player.getName();
+		}
 	}
 }

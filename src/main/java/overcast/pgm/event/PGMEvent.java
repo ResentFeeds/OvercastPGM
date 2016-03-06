@@ -5,7 +5,7 @@ import org.bukkit.event.HandlerList;
 
 public class PGMEvent extends Event {
 	
-	private static final HandlerList handlers = new HandlerList();
+	protected static final HandlerList handlers = new HandlerList();
 
 	public HandlerList getHandlers() {
 		return handlers;
