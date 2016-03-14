@@ -24,6 +24,7 @@ import overcast.pgm.OvercastPGM;
 import overcast.pgm.channels.Channel;
 import overcast.pgm.channels.ChannelFactory;
 import overcast.pgm.match.Match;
+import overcast.pgm.match.MatchHandler;
 import overcast.pgm.module.modules.team.Team;
 import overcast.pgm.module.modules.team.TeamManager;
 import overcast.pgm.module.modules.tutorial.TutorialManager;
@@ -90,22 +91,12 @@ public class OvercastPlayer {
 		this.player.closeInventory();
 	}
 
-	public static OvercastPlayer getPlayers(String name) {
+	public static OvercastPlayer getPlayer(String name) {
 		for (OvercastPlayer players : getPlayers()) {
-			if (players.getName().equals(name)) {
+			if (players.getPlayerName().equals(name)) {
 				return players;
 			}
 		}
-		return null;
-	}
-
-	public static OvercastPlayer getPlayer(String string) {
-		for (OvercastPlayer players : getPlayers()) {
-			if (players.getName().equals(string)) {
-				return players;
-			}
-		}
-
 		return null;
 	}
 
@@ -113,8 +104,16 @@ public class OvercastPlayer {
 		return this.player;
 	}
 
+	public String getPlayerName() {
+		return hasNickname() ? getNickname() : getName();
+	}
+
 	public static List<OvercastPlayer> getPlayers() {
 		return players;
+	}
+
+	public boolean isAuthor() {
+		return MatchHandler.getMatchHandler().getMatch().getMap().getInfo().isAuthor(this.player);
 	}
 
 	public Team getTeam() {
@@ -127,9 +126,8 @@ public class OvercastPlayer {
 			return true;
 		}
 		return false;
-	} 
-	
-	
+	}
+
 	public boolean hasTeam() {
 		return getTeam() != null;
 	}
@@ -298,6 +296,7 @@ public class OvercastPlayer {
 		for (Entry<Integer, ItemStack> entry : this.items.entrySet()) {
 			inv.setItem(entry.getKey(), entry.getValue());
 		}
+
 		for (Entry<Integer, ItemStack> entry : this.hotbar.entrySet()) {
 
 			inv.setItem(entry.getKey(), entry.getValue());
@@ -352,7 +351,7 @@ public class OvercastPlayer {
 		inv.setItem(6, potions);
 		inv.setItem(7, hungerStack);
 		inv.setItem(8, healthStack);
-		p.openInventory(inv); 
+		p.openInventory(inv);
 	}
 
 	public void updateInventory() {
@@ -385,5 +384,13 @@ public class OvercastPlayer {
 
 	public Scoreboard getScoreboard() {
 		return this.player.getScoreboard();
+	}
+
+	public void canSee(OvercastPlayer player) {
+		this.player.canSee(player.getPlayer());
+	}
+
+	public void hidePlayer(OvercastPlayer player) {
+		this.player.hidePlayer(player.getPlayer());
 	}
 }

@@ -39,10 +39,10 @@ public class KitBuilder extends Builder {
 		/**
 		 * if <kits> tag isn't there it wouldn't work.
 		 */
-		return kitsTag == null ? null : parseKits(kitsTag, "kit");
+		return kitsTag == null ? null : parseKits(kitsTag);
 	}
 
-	private ModuleCollection<Module> parseKits(Node kitsTag, String string) {
+	private ModuleCollection<Module> parseKits(Node kitsTag) {
 		ModuleCollection<Module> modules = new ModuleCollection<>();
 		if (kitsTag.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) kitsTag;
@@ -51,77 +51,78 @@ public class KitBuilder extends Builder {
 
 			for (Element child : children) {
 				if (child != null) {
-					if (child.getTagName().equals(string)) {
-						modules.add(parseKit(child));
-					}
+					modules.add(parseKit(child, false));
 				}
 			}
 		}
 		return modules;
 	}
 
-	public static KitModule parseKit(Element child) {
-		List<Element> children = XMLUtils.getChildElements(child);
-		List<ItemKit> items = new ArrayList<>();
-		List<ArmorKit> armor = new ArrayList<>();
-		List<BookKit> books = new ArrayList<>();
-		List<PotionKit> potions = new ArrayList<>();
-		boolean force = XMLUtils.parseBoolean(child.getAttribute("force"));
-		String id = child.hasAttribute("id") ? child.getAttribute("id") : null;
-		List<String> parents = child.hasAttribute("parents") ? parseParents(child.getAttribute("parents")) : null;
-		HealthKit health = null;
-		GamemodeKit gamemode = null;
-		float walkspeed = 0.2f ;
-		float saturation = 0;
-		int foodlevel = 20;
-		boolean clearItems = false;
-		boolean clear = false;
-		for (Element c : children) {
-			switch (c.getTagName()) {
-			case "item":
-				items.add(new ItemKit(new ItemKitParser(c)));
-				break;
-			case "book":
-				books.add(new BookKit(new BookKitParser(c)));
-				break;
-			case "helmet":
-				armor.add(new ArmorKit(ArmorType.HELMET, new ArmorKitParser(c)));
-				break;
-			case "chestplate":
-				armor.add(new ArmorKit(ArmorType.CHESTPLATE, new ArmorKitParser(c)));
-				break;
-			case "leggings":
-				armor.add(new ArmorKit(ArmorType.LEGGINGS, new ArmorKitParser(c)));
-				break;
-			case "boots":
-				armor.add(new ArmorKit(ArmorType.BOOTS, new ArmorKitParser(c)));
-			case "clear":
-				clear = true;
-			case "clear-items":
-				clearItems = true;
-				break;
-			case "potion":
-				potions.add(new PotionKit(new PotionKitParser(c)));
-				break;
-			case "health":
-				health = new HealthKit(new HealthKitParser(c));
-				break;
-			case "saturation":
-				saturation = NumberUtils.parseFloat(c.getTextContent());
-			case "foodlevel":
-				foodlevel = NumberUtils.parseInteger(c.getTextContent());
-				break;
-			case "game-mode":
-				gamemode = new GamemodeKit(new GamemodeKitParser(c));
-				break;
-			case "walk-speed": 
-				walkspeed = NumberUtils.parseFloat(c.getTextContent());
-				break;
+	public static KitModule parseKit(Element child, boolean proceed) {
+		if (child.getTagName().equals("kit") || proceed) {
+			List<Element> children = XMLUtils.getChildElements(child);
+			List<ItemKit> items = new ArrayList<>();
+			List<ArmorKit> armor = new ArrayList<>();
+			List<BookKit> books = new ArrayList<>();
+			List<PotionKit> potions = new ArrayList<>();
+			boolean force = XMLUtils.parseBoolean(child.getAttribute("force"));
+			String id = child.hasAttribute("id") ? child.getAttribute("id") : null;
+			List<String> parents = child.hasAttribute("parents") ? parseParents(child.getAttribute("parents")) : null;
+			HealthKit health = null;
+			GamemodeKit gamemode = null;
+			float walkspeed = 0.2f;
+			float saturation = 0;
+			int foodlevel = 20;
+			boolean clearItems = false;
+			boolean clear = false;
+			for (Element c : children) {
+				switch (c.getTagName()) {
+				case "item":
+					items.add(new ItemKit(new ItemKitParser(c)));
+					break;
+				case "book":
+					books.add(new BookKit(new BookKitParser(c)));
+					break;
+				case "helmet":
+					armor.add(new ArmorKit(ArmorType.HELMET, new ArmorKitParser(c)));
+					break;
+				case "chestplate":
+					armor.add(new ArmorKit(ArmorType.CHESTPLATE, new ArmorKitParser(c)));
+					break;
+				case "leggings":
+					armor.add(new ArmorKit(ArmorType.LEGGINGS, new ArmorKitParser(c)));
+					break;
+				case "boots":
+					armor.add(new ArmorKit(ArmorType.BOOTS, new ArmorKitParser(c)));
+				case "clear":
+					clear = true;
+				case "clear-items":
+					clearItems = true;
+					break;
+				case "potion":
+					potions.add(new PotionKit(new PotionKitParser(c)));
+					break;
+				case "health":
+					health = new HealthKit(new HealthKitParser(c));
+					break;
+				case "saturation":
+					saturation = NumberUtils.parseFloat(c.getTextContent());
+				case "foodlevel":
+					foodlevel = NumberUtils.parseInteger(c.getTextContent());
+					break;
+				case "game-mode":
+					gamemode = new GamemodeKit(new GamemodeKitParser(c));
+					break;
+				case "walk-speed":
+					walkspeed = NumberUtils.parseFloat(c.getTextContent());
+					break;
+				}
 			}
+			HungerKit hunger = new HungerKit(saturation, foodlevel);
+			return new KitModule(id, force, clear, clearItems, parents, items, armor, potions, books, health, hunger,
+					gamemode != null ? gamemode : new GamemodeKit(GameMode.SURVIVAL), walkspeed);
 		}
-		HungerKit hunger = new HungerKit(saturation, foodlevel);
-		return new KitModule(id, force, clear, clearItems, parents, items, armor, potions, books, health, hunger,
-				gamemode != null ? gamemode : new GamemodeKit(GameMode.SURVIVAL), walkspeed);
+		return null;
 	}
 
 	private static List<String> parseParents(String parent) {

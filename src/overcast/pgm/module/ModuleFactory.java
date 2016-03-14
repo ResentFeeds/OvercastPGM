@@ -72,6 +72,11 @@ public class ModuleFactory {
 		}
 		return results;
 	}
+	
+	
+	public boolean removeModule(Module module){
+		return modules.remove(module);
+	}
 
 	public BuilderRegistry getRegistry() {
 		return this.registry;

@@ -32,6 +32,8 @@ public class ModuleCollection<M extends Module> extends ArrayList<M> {
 	public boolean isModuleLoaded(Class<? extends Module> clazz) {
 		return getModule(clazz) != null ? true : false;
 	}
+	
+	
 
 	/**
 	 * Used to get all modules of a certain type

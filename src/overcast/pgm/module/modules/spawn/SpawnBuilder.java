@@ -46,19 +46,13 @@ public class SpawnBuilder extends Builder {
 							KitModule kit = child.hasAttribute("kit") ? KitUtils.getKit(child.getAttribute("kit"))
 									: null;
 
-							Region region = child.hasAttribute("region") ? rc.get(child.getAttribute("region")) : null;
-							// String outcome = region != null ? "not null" :
-							// "null";
-							// Log.info(outcome);
+							Region region = child.hasAttribute("region") ? rc.get(child.getAttribute("region")) : null; 
 							spawns.add(new Spawn(team, region, kit));
 							break;
 						}
 					}
-				}
-
-				// System.out.println("there are " + i + "spawn" + (i != 0 && i
-				// > 1 ? "s" : ""));
-
+				} 
+				
 				Element defaultE = XMLUtils.getUniqueChild(spawnsElement, "default");
 				if (defaultE != null) {
 					Region region = defaultE.hasAttribute("region") ? rc.get(defaultE.getAttribute("region")) : null;
@@ -78,8 +72,7 @@ public class SpawnBuilder extends Builder {
 	}
 
 	@Override
-	public ModuleCollection<Module> build(Document doc) throws XMLParseException {
+	public ModuleCollection<Module> build(Document doc) throws XMLParseException { 
 		return null;
-	}
-
+	} 
 }

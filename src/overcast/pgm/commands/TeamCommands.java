@@ -49,7 +49,7 @@ public class TeamCommands {
 			boolean teamsLoaded = match.getModules().isModuleLoaded(TeamModule.class);
 			boolean woolsLoaded = match.getModules().isModuleLoaded(WoolObjective.class);
 			if (teamsLoaded) {
-				Team team = TeamUtil.getTeam(args.getString(0));
+				Team team = TeamUtil.getTeam(args.getJoinedStrings(0));
 				if (team != null) {
 					if (woolsLoaded) {
 						Collection<WoolObjective> wools = WoolObjective.getObjectives(team);

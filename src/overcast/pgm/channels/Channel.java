@@ -34,15 +34,8 @@ public abstract class Channel {
 		return this.name;
 	}
 
-	public String getTechinalName() {
-		String[] string = new String[] { "Channel" };
-		
-		String result = null;
-		
-		for (String channel : string) {
-			result = channel;
-		}
-		return getName() + " " + result;
+	public String getTechinalName() { 
+		return getName() + " Channel";
 	}
 
 	public boolean hasColor() {

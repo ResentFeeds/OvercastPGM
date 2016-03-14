@@ -1,5 +1,6 @@
 package overcast.pgm.module.modules.tutorial;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -9,6 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import overcast.pgm.builder.Builder;
 import overcast.pgm.match.Match;
+import overcast.pgm.match.MatchHandler;
 import overcast.pgm.module.MatchModule;
 import overcast.pgm.module.Module;
 
@@ -54,6 +56,7 @@ public class TutorialModule extends Module {
 
 		if (stage == null) {
 			meta.setDisplayName(ChatColor.GOLD + ChatColor.BOLD.toString() + "View Tutorial");
+			meta.setLore(Arrays.asList(ChatColor.WHITE + "Learn how to play " + ChatColor.AQUA + "" + ChatColor.BOLD + MatchHandler.getMatchHandler().getMatch().getMap().getInfo().getName() + "!"));
 		} else {
 			TutorialStage next = this.getNextStage(stage);
 			TutorialStage prev = this.getPreviousStage(stage);

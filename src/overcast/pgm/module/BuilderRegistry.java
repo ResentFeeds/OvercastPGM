@@ -67,7 +67,7 @@ public class BuilderRegistry {
 		addBuilder(BroadcastBuilder.class); // need to work on
 	    addBuilder(SpawnBuilder.class); // need to work on
 	    addBuilder(ProjectileBuilder.class); // need to work on 
-		addBuilder(WoolBuilder.class); // need to work on
+		addBuilder(WoolBuilder.class); // need to work on 
 	}
 
 

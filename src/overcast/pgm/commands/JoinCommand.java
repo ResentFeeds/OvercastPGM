@@ -26,7 +26,6 @@ public class JoinCommand {
 			if (args.argsLength() == 1) {
 				if (args.getSlice(1)[0].equalsIgnoreCase("obs") || args.getSlice(1)[0].equalsIgnoreCase("observers")) {
 					Team team = TeamUtil.getTeamModule().getObservers();
-
 					TeamManager.addPlayer(team, p);
 					/**
 					 * return here so it wont give them the team not found in

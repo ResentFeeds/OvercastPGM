@@ -2,13 +2,16 @@ package overcast.pgm.module.modules.objective.wool;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.libs.jline.internal.Log;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.material.Wool;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.ItemStack;
+
+import overcast.pgm.event.PlayerPlaceWoolEvent;
 import overcast.pgm.match.Match;
 import overcast.pgm.module.MatchModule;
 import overcast.pgm.module.modules.region.types.BlockRegion;
@@ -17,6 +20,9 @@ import overcast.pgm.player.OvercastPlayer;
 import overcast.pgm.util.BlockUtils;
 import overcast.pgm.util.BukkitUtils;
 import overcast.pgm.util.Characters;
+import overcast.pgm.util.Log;
+import overcast.pgm.util.MessageUtils;
+
 //FIXME wools not working when placed :/
 public class WoolMatchModule extends MatchModule implements Listener {
 
@@ -34,6 +40,7 @@ public class WoolMatchModule extends MatchModule implements Listener {
 
 	@Override
 	public void unload() {
+		this.wool.clearTouched();
 		HandlerList.unregisterAll(this);
 	}
 
@@ -44,47 +51,68 @@ public class WoolMatchModule extends MatchModule implements Listener {
 
 	@Override
 	public void disable() {
+		this.wool.clearTouched();
 		HandlerList.unregisterAll(this);
 	}
 
-	@EventHandler
+	// NEED TO FIX
+	@EventHandler(ignoreCancelled = false, priority = EventPriority.MONITOR)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		OvercastPlayer player = OvercastPlayer.getPlayers(event.getPlayer());
-		Block block = event.getBlock();
-		if (!player.isObserver()) {
-			Team team = player.getTeam();
-			Team owner = wool.getTeam();
+		Team team = player.getTeam();
+		Team owner = this.wool.getTeam();
 
-			BlockRegion monument = wool.getMonumentRegion(); 
-			if (monument.contains(block.getLocation())) {
-				Log.info("monumment vector checked");
-				if (team.equals(owner) && BlockUtils.isWool(block)) {
-					Wool w = new Wool(wool.getColor());
-					if (block.getData() == w.getData()) {
-						String who = player.getTeam().getColor() + player.getName();
-						String placed = ChatColor.WHITE + " placed the "
-								+ BukkitUtils.convertDyeColorToChatColor(wool.getColor()) + wool.getWoolName().toUpperCase();
-						String t = ChatColor.WHITE + " for " + player.getTeam().getColoredName();
-						String message = who + placed + t;
-						Bukkit.broadcastMessage(message);
-						
-							try {
-								wool.setCompleted(true, Characters.Check);
-							} catch (Exception e) { 
-								e.printStackTrace();
-							} 
-					} else {
-						event.setCancelled(true);
-					}
+		BlockRegion monument = this.wool.getMonument();
+		if (monument.contains(event.getBlock().getLocation().toVector())) {
+			if (team == owner) {
+				if (BlockUtils.isWool(event.getBlock()) && event.getBlock().getData() == wool.getColor().getDyeData()) {
+					Log.info("wool placed ");
 				} else {
 					event.setCancelled(true);
-					player.sendMessage(
-							"You may not place at the " + BukkitUtils.convertDyeColorToChatColor(wool.getColor())
-									+ wool.getWoolName().toUpperCase());
+					MessageUtils.warningMessage(player.getPlayer(),
+							ChatColor.RED + "Only " + BukkitUtils.convertDyeColorToChatColor(this.wool.getColor())
+									+ this.wool.getWoolName().toUpperCase() + ChatColor.RED + " may be placed here!");
 				}
 			} else {
+				event.setCancelled(true);
+				MessageUtils.warningMessage(player.getPlayer(),
+						ChatColor.RED + "Only " + BukkitUtils.convertDyeColorToChatColor(this.wool.getColor())
+								+ this.wool.getWoolName().toUpperCase() + ChatColor.RED + " may be placed here!");
+			}
+		} 
+	}
+
+	// FIXME broadcasts is going off 2 to 8 times
+
+	@EventHandler
+	public void onWoolPlace(PlayerPlaceWoolEvent event) {
+		if (event.getWhoPlaced() != null) {
+			OvercastPlayer who = event.getWhoPlaced();
+			WoolObjective wool = event.getWoolObjective();
+			Team whosTeam = who.getTeam();
+			try {
+				wool.setCompleted(true, Characters.Check);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			if (wool.isCompleted()) {
+				Bukkit.broadcastMessage(whosTeam.getColor() + (who.hasNickname() ? who.getNickname() : who.getName())
+						+ ChatColor.WHITE + " placed " + BukkitUtils.convertDyeColorToChatColor(wool.getColor())
+						+ wool.getWoolName() + ChatColor.WHITE + " for " + wool.getTeam().getColoredName());
 				return;
 			}
+		}
+	}
+
+	@EventHandler
+	public void onWoolPickup(PlayerPickupItemEvent event) {
+		ItemStack pickedUp = event.getItem().getItemStack();
+		OvercastPlayer player = OvercastPlayer.getPlayers(event.getPlayer());
+
+		if (pickedUp.getType() == Material.WOOL && pickedUp.getData().getData() == this.wool.getColor().getData()
+				&& player.getTeam() == this.wool.getTeam()) {
+			this.wool.handleTouches(player);	
 		}
 	}
 }

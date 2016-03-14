@@ -18,8 +18,8 @@ public class ItemKit {
 	ItemKitParser parser;
 	ProjectileModule projectile;
 	Set<Material> canDestroy;
-    Set<Material> canPlaceOn; // need to implement
-
+    Set<Material> canPlaceOn;
+    
 	public ItemKit(int slot, ItemStack stack, ProjectileModule projectile, Set<Material> canDestroy, Set<Material> canPlaceOn) {
 		this.slot = slot;
 		this.stack = stack;

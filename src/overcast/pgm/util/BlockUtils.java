@@ -35,4 +35,5 @@ public class BlockUtils {
 	public static boolean isWool(Block block) {
 		return block.getType() == Material.WOOL;
 	}
+	
 }

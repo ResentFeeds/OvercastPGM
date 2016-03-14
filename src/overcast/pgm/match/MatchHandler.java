@@ -26,7 +26,7 @@ public class MatchHandler {
 
 	public MatchHandler(Match match) {
 		this.match = match; 
-		instance = this;
+		instance = this; 
 		loadMap(match.getMap(), +1);
 	}
 

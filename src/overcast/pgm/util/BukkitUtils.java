@@ -130,6 +130,23 @@ public class BukkitUtils {
 		return false;
 	}
 
+	public static void playerVisibility(OvercastPlayer player) {
+		boolean observer = player.isObserver();
+		if (observer) {
+			for (OvercastPlayer players : OvercastPlayer.getPlayers()) {
+				if (observer) {
+					if (!players.isObserver()) {
+						players.hidePlayer(player);
+					}
+				}else{
+					if(players.isObserver()){
+						// try this
+					}
+				}
+			}
+		}
+	}
+
 	public static DamageCause getDamageType(String key) {
 		for (DamageCause cause : DamageCause.values()) {
 			if (key != null && StringUtils.getName(cause.name()).equals(key)) {

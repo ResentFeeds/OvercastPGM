@@ -4,8 +4,7 @@ public class TimeUtil {
 
 	// parse time
 	// 5m = Five minutes (FINAL RESULT == 5:00)
-	public static int parseTime(String text) {
-		System.out.println(text);
+	public static int parseTime(String text) { 
 		int length = text.length();
 		int start;
 		if (length != 0) {
@@ -14,22 +13,20 @@ public class TimeUtil {
 					start = period == Period.mo ? length - 2 : length - 1;
 					int end = period == Period.mo ? start + 2 : start + 1;
 					String sub = text.substring(start, end);
-					String how = text.substring(0, 0 + start);
-					System.out.println(how);
+					String how = text.substring(0, 0 + start); 
 					int amount = Integer.parseInt(how);
 					int time = Period.getTime(sub);
 					return amount * time;
 				}
 			}
-		}
-
+		} 
+		
 		return 0;
 	}
 
 	public static String formatIntoHHMMSS(int secsIn) {
 
-		int hours = secsIn / 3600, remainder = secsIn % 3600, minutes = remainder / 60, seconds = remainder % 60;
-
+		int hours = secsIn / 3600, remainder = secsIn % 3600, minutes = remainder / 60, seconds = remainder % 60; 
 		return ((hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":"
 				+ (seconds < 10 ? "0" : "") + seconds);
 

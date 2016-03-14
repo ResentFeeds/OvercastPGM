@@ -17,14 +17,10 @@ import overcast.pgm.util.MessageUtils;
 public class MaxBuildHeightMatchModule extends MatchModule implements Listener {
 
 	int height;
-	String message;
 
 	public MaxBuildHeightMatchModule(Match match, int height) {
 		super(match);
 		this.height = height;
-		this.message = ChatColor.RED
-				+ "You have reached the maximum build height ("
-				+ ChatColor.AQUA + height + ChatColor.RED + " blocks)";
 	}
 
 	@Override
@@ -53,7 +49,8 @@ public class MaxBuildHeightMatchModule extends MatchModule implements Listener {
 		if (p.hasTeam() && !p.isObserver()) {
 			if (event.getBlock().getY() > this.height) {
 				event.setCancelled(true);
-				MessageUtils.warningMessage(p.getPlayer(), this.message);
+				MessageUtils.warningMessage(p.getPlayer(), ChatColor.RED + "You have reached the maximum build height ("
+						+ ChatColor.AQUA + height + ChatColor.RED + " blocks)");
 			}
 		}
 	}
@@ -64,7 +61,8 @@ public class MaxBuildHeightMatchModule extends MatchModule implements Listener {
 		if (p.hasTeam() && !p.isObserver()) {
 			if (event.getBlock().getY() > this.height) {
 				event.setCancelled(true);
-				MessageUtils.warningMessage(p.getPlayer(), this.message);
+				MessageUtils.warningMessage(p.getPlayer(), ChatColor.RED + "You have reached the maximum build height ("
+						+ ChatColor.AQUA + height + ChatColor.RED + " blocks)");
 			}
 		}
 	}
@@ -75,7 +73,8 @@ public class MaxBuildHeightMatchModule extends MatchModule implements Listener {
 		if (p.hasTeam() && !p.isObserver()) {
 			if (event.getBlockClicked().getY() > this.height) {
 				event.setCancelled(true);
-				MessageUtils.warningMessage(p.getPlayer(), this.message);
+				MessageUtils.warningMessage(p.getPlayer(), ChatColor.RED + "You have reached the maximum build height ("
+						+ ChatColor.AQUA + height + ChatColor.RED + " blocks)");
 			}
 		}
 	}
@@ -86,7 +85,8 @@ public class MaxBuildHeightMatchModule extends MatchModule implements Listener {
 		if (p.hasTeam() && !p.isObserver()) {
 			if (event.getBlockClicked().getY() > this.height) {
 				event.setCancelled(true);
-				MessageUtils.warningMessage(p.getPlayer(), this.message);
+				MessageUtils.warningMessage(p.getPlayer(), ChatColor.RED + "You have reached the maximum build height ("
+						+ ChatColor.AQUA + height + ChatColor.RED + " blocks)");
 			}
 		}
 	}

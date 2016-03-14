@@ -13,26 +13,29 @@ import overcast.pgm.util.KitUtils;
 
 public class KitsCommand {
 
-
-	@Command(aliases = "kit", desc = "a kits testing command")
+	@Command(aliases = "kit", desc = "a kits testing command", min = 0, max = 1, usage = "[id]")
 	public static void kits(final CommandContext args, CommandSender sender) {
 		if (sender instanceof Player) {
 			OvercastPlayer p = OvercastPlayer.getPlayers((Player) sender);
-			if (args.argsLength() == 0) {
-				for (KitModule kitModule : KitUtils.getKits()) {
-					if (kitModule != null) {
-						p.sendMessage(kitModule.getID());
+			if (!KitUtils.getKits().isEmpty()) {
+				if (args.argsLength() == 0) {
+					for (KitModule kitModule : KitUtils.getKits()) {
+						if (kitModule != null) {
+							p.sendMessage(kitModule.getID());
+						}
 					}
+					return;
+				} 
+
+				KitModule kit = KitUtils.getKit(args.getJoinedStrings(0));
+
+				if (kit != null) {
+					kit.applyKit(p);
+				} else {
+					sender.sendMessage(ChatColor.RED + "No kit found by that name!");
 				}
-				return;
-			}
-
-			KitModule kit = KitUtils.getKit(args.getJoinedStrings(0));
-
-			if (kit != null) {
-				kit.applyKit(p);
-			} else {
-				sender.sendMessage(ChatColor.RED + "No kit round by that name!");
+			}else{
+				p.sendMessage(ChatColor.RED + "No kits found on this map!");
 			}
 		}
 	}

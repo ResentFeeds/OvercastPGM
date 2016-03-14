@@ -1,7 +1,7 @@
 package overcast.pgm;
 
 import java.io.File;
-import java.util.Iterator; 
+import java.util.Iterator;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,7 +11,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
+import org.bukkit.event.Listener; 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.PluginManager;
@@ -32,7 +32,7 @@ import overcast.pgm.commands.JoinCommand;
 import overcast.pgm.commands.KitsCommand;
 import overcast.pgm.commands.LoadedMapsCommand;
 import overcast.pgm.commands.MapCommands;
-import overcast.pgm.commands.MapInfoCommand; 
+import overcast.pgm.commands.MapInfoCommand;
 import overcast.pgm.commands.NickCommand;
 import overcast.pgm.commands.RotationCommand;
 import overcast.pgm.commands.ScoreboardCommands;
@@ -53,28 +53,34 @@ import overcast.pgm.module.modules.info.Version;
 import overcast.pgm.module.modules.team.TeamManager;
 import overcast.pgm.player.OvercastPlayer;
 import overcast.pgm.rotation.Rotation;
+import overcast.pgm.util.KitUtils;
 import overcast.pgm.util.Log;
 import overcast.pgm.util.TeamUtil;
+ 
 
-/** make class for team handling */
+/** HIGHEST PRIOITIES **/
+//FIXME an error while parsing modules ?
+//FIXME Custom projectiles not working at all
+//FIXME BroadcastModule not broadcasting at the correct time
+//FIXME TutorialModule not teleporting to next stage.
+//FIXME KillReward update ;) 
+//FIXME UPDATE Channels :)
 
-//TODO finish up all current Modules 
+//  TODO LATER  //
 
-// work on projectileModule, BowProjectileModule etc;
+// work on projectileModule
 
 //** TODO fix authors in loaded maps and rotation pages being "null"
-
-//TODO timers 
 
 //TODO match ending, cycling
 
 //TODO Scoreboards, Objectives 
 
-//TODO may add more to the list */
-
-//TODO find a way to make the modules load diffferent times */
+//TODO may add more to the list */ 
 
 //TODO work on RegionModule, KitModule, FilterModule :)
+
+//TODO make inventory auto update 
 
 //TODO make all commands using the Command Framework
 
@@ -135,7 +141,7 @@ public class OvercastPGM extends JavaPlugin {
 			this.rotation = new Rotation(rotationYML, this.loader);
 
 			this.match = new Match(this, 1, this.rotation.getRotationMaps().get(0));
-			setupCommands(); 
+			setupCommands();
 			refreshTeams();
 			loadListeners();
 		}
@@ -202,15 +208,15 @@ public class OvercastPGM extends JavaPlugin {
 		}
 	}
 
-	public void onDisable() { 
-		instance = null; 
+	public void onDisable() {
+		instance = null;
 		if (getMatch() != null) {
-			if (getMatch().isRunning() || getMatch().isLoading()) { 
+			if (getMatch().isRunning() || getMatch().isLoading()) {
 				InfoModule info = getMatch().getMap().getInfo();
 				info.clearAuthorNames();
 				info.clearContributorNames();
 				MatchModuleContext context = getMatch().getContext();
-				context.disable(); 
+				context.disable();
 			}
 		}
 
@@ -230,11 +236,7 @@ public class OvercastPGM extends JavaPlugin {
 				ocnPlayer.remove();
 			}
 		}
-	}
-
-	public void addCommand(String name, CommandExecutor command) {
-		this.getCommand(name).setExecutor(command);
-	}
+	} 
 
 	public void addListener(Listener listener) {
 		getServer().getPluginManager().registerEvents(listener, this);
@@ -263,6 +265,7 @@ public class OvercastPGM extends JavaPlugin {
 		listeners.add(new MatchListener());
 		listeners.add(new DeathListener());
 		listeners.add(new ScoreboardListener());
+		
 		for (Listener listener : listeners) {
 			registerListener(listener);
 		}
@@ -276,13 +279,20 @@ public class OvercastPGM extends JavaPlugin {
 		return this.pm;
 	}
 
+	// makes you join observers if your playing? when ever you reload the server
+	// you will be joining the observers team due to this method
 	public void refreshTeams() {
 		for (OvercastPlayer players : OvercastPlayer.getPlayers()) {
 			if (players != null) {
-				if (!players.hasTeam()
-						|| players.hasTeam() && !players.getTeam().equals(TeamUtil.getTeamModule().getObservers())) {
-					TeamManager.addPlayer(TeamUtil.getTeamModule().getObservers(), players);
+				if (!players.hasTeam() || players.hasTeam()) {
+					if (players.hasTeam()) {
+						if (players.isObserver()) {
+							KitUtils.giveObsKit(players);
+							continue;
+						}
+					}
 				}
+				TeamManager.addPlayer(TeamUtil.getTeamModule().getObservers(), players);
 			}
 		}
 	}

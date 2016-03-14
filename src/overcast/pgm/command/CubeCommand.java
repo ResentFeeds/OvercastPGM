@@ -19,6 +19,7 @@ import overcast.pgm.module.modules.filter.FilterContext;
 import overcast.pgm.module.modules.filter.FilterModule;
 import overcast.pgm.player.OvercastPlayer;
 import overcast.pgm.util.BukkitUtils;
+import overcast.pgm.util.MessageUtils;
 import overcast.pgm.util.XMLUtils;
 
 import com.sk89q.minecraft.util.commands.Command;
@@ -52,18 +53,31 @@ public class CubeCommand {
 		}
 	}
 
-	@Command(aliases = "view", desc = "view your inventory")
-	public static void inventory(final CommandContext args, CommandSender sender){
-		if(sender instanceof Player){
+	@Command(aliases = "inventory", desc = "view a players inventory", usage = "[player]", min = 1, max = 1)
+	public static void inventory(final CommandContext args, CommandSender sender) {
+		if (sender instanceof Player) {
 			OvercastPlayer player = OvercastPlayer.getPlayers((Player) sender);
-			if(player.isObserver()){
-				player.viewInventory(player);
-			}else{
-				player.sendMessage(ChatColor.RED + "You need to be a observer to do this");
+			if (player.isObserver()) {
+				OvercastPlayer who = OvercastPlayer.getPlayer(args.getJoinedStrings(0));
+				if (who != null) {
+					if (!who.isObserver()) {
+						who.viewInventory(player);
+					} else {
+						// send them a message if they
+						MessageUtils.warningMessage(player.getPlayer(),
+								ChatColor.WHITE + "Player's inventory is not currently viewable");
+					}
+				} else {
+					MessageUtils.warningMessage(player.getPlayer(), ChatColor.RED + "The player " + ChatColor.DARK_RED
+							+ args.getJoinedStrings(0) + ChatColor.RED + " is currently not online!");
+				}
+			} else {
+				MessageUtils.warningMessage(player.getPlayer(),
+						ChatColor.WHITE + "Player's inventory is not currently viewable");
 			}
 		}
 	}
-	
+
 	@Command(aliases = "filters", desc = "a filters command")
 	public static void filters(final CommandContext args, CommandSender sender) {
 		if (sender instanceof Player) {
@@ -80,7 +94,7 @@ public class CubeCommand {
 						player.sendMessage(context.getName(entry));
 					}
 				}
- 
+
 				List<Filter> children = filterMod.getChildren();
 
 				for (Filter filter : children) {
@@ -103,7 +117,7 @@ public class CubeCommand {
 		}
 	}
 
-	@Command(aliases = "spawn", desc = "spawn a entity", usage = "<entity> <amount>")
+	@Command(aliases = "spawn", desc = "spawn a entity", usage = "<entity> <amount>", min = 1, max = 2)
 	public static void spawnEntity(final CommandContext args, CommandSender sender) {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
@@ -144,14 +158,10 @@ public class CubeCommand {
 				entity.remove();
 			}
 		}
-		
-	
-		if(amount != 0){
-		player.sendMessage(ChatColor.WHITE + "Removed " + ChatColor.RED + "" + amount + ChatColor.WHITE + " "
-				+ (amount == 1 ? "entity" : "entities"));
-		}else{
-			player.sendMessage(ChatColor.RED + "No entities on your world");
-		}
+
+		player.sendMessage(amount != 0 ? ChatColor.WHITE + "Removed " + ChatColor.RED + "" + amount + ChatColor.WHITE
+				+ " " + (amount == 1 ? "entity" : "entities") : ChatColor.RED + "No entities on your world");
+
 	}
 
 	public static void spawnCube(Player player, Material mat, int radius) {

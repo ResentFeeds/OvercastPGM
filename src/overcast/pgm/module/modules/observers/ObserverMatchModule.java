@@ -9,6 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -65,6 +66,7 @@ public class ObserverMatchModule extends MatchModule implements Listener {
 	@Override
 	public void disable() {
 		// nothing
+		HandlerList.unregisterAll(this);
 	}
 
 	@EventHandler
@@ -186,7 +188,7 @@ public class ObserverMatchModule extends MatchModule implements Listener {
 					event.setCancelled(true);
 					player.openInventory(chest);
 				}
-			}
+			} 
 
 			if (event.getClickedBlock() != null && !event.getPlayer().isSneaking()
 					&& event.getAction() == Action.RIGHT_CLICK_BLOCK) {
@@ -208,7 +210,7 @@ public class ObserverMatchModule extends MatchModule implements Listener {
 		OvercastPlayer p = OvercastPlayer.getPlayers((Player) event.getPlayer());
 
 		String name = ChatColor.stripColor(event.getInventory().getName());
-		OvercastPlayer whos = OvercastPlayer.getPlayers(name);
+		OvercastPlayer whos = OvercastPlayer.getPlayer(name);
 
 		if (p != null && whos != null) {
 			if (whos.hotbar.size() > 0) {
@@ -328,13 +330,14 @@ public class ObserverMatchModule extends MatchModule implements Listener {
 						}
 					}
 				}
-				
-				
-				
-				if(event.getInventory().getName().equals("Furnace") || event.getInventory().getName().equals("Chest")){
-					if(event.getCurrentItem() != null){
-						if(event.getClick() == ClickType.LEFT || event.getClick() == ClickType.RIGHT){
-							 event.setCancelled(true);
+
+				if (event.getInventory().getName().equals("Furnace")
+						|| event.getInventory().getName().equals("Chest")) {
+					if (event.getCurrentItem() != null) {
+						if (event.getClick() == ClickType.LEFT || event.getClick() == ClickType.RIGHT
+								|| event.getClick() == ClickType.SHIFT_RIGHT
+								|| event.getClick() == ClickType.SHIFT_LEFT) {
+							event.setCancelled(true);
 						}
 					}
 				}

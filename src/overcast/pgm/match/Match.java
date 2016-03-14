@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.w3c.dom.Document;
@@ -14,9 +13,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 import overcast.pgm.OvercastPGM;
+import overcast.pgm.WinManager;
 import overcast.pgm.event.MatchBeginEvent;
 import overcast.pgm.event.MatchLoadEvent;
 import overcast.pgm.generator.NullChunkGenerator;
@@ -27,8 +26,8 @@ import overcast.pgm.module.ModuleCollection;
 import overcast.pgm.module.ModuleFactory;
 import overcast.pgm.module.ModuleStage;
 import overcast.pgm.module.modules.objective.wool.WoolObjective;
+import overcast.pgm.module.modules.observers.ObserverModule;
 import overcast.pgm.module.modules.team.Team;
-import overcast.pgm.module.modules.team.TeamManager;
 import overcast.pgm.module.modules.team.TeamModule;
 import overcast.pgm.module.modules.timelimit.TimeModule;
 import overcast.pgm.module.modules.tutorial.TutorialManager;
@@ -53,7 +52,7 @@ public class Match {
 
 	private Map map;
 	/** the current map */
-    
+
 	private Map next = null;
 
 	private ModuleFactory factory;
@@ -73,6 +72,10 @@ public class Match {
 	private TutorialManager tutManager;
 	private MatchTimer mTimer;
 	private ScoreboardHandler sbhandler;
+	private TimeModule timerModule;
+
+	// class for handling the winner of the match
+	private WinManager winM;
 
 	/** state of the match */
 
@@ -80,16 +83,12 @@ public class Match {
 		this.pgm = pgm;
 		this.id = id;
 		this.map = map;
-		loadMap(map, id++);
-
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			player.teleport(getWorld().getSpawnLocation());
-		}
+		this.handler = new MatchHandler(this);
 
 		this.state = MatchState.LOAD;
+		this.winM = new WinManager(this);
 		this.modules = new ModuleCollection<>();
 		this.next = pgm.getRotation().getRotationMaps().get(pgm.getRotation().getPostion());
-		this.handler = new MatchHandler(this);
 		this.factory = new ModuleFactory(getDocument());
 		StartTimer timer = new StartTimer(30, this);
 		timer.run();
@@ -176,36 +175,40 @@ public class Match {
 		setState(MatchState.RUNNING);
 		MatchBeginEvent event = new MatchBeginEvent(this);
 		Bukkit.getPluginManager().callEvent(event);
+
 		boolean loaded = this.getModules().isModuleLoaded(TimeModule.class);
 
 		if (loaded) {
-			TimeModule timeModule = this.getModules().getModule(TimeModule.class);
-			timeModule.create();
-			timeModule.run();
-		} else {
-			this.mTimer = new MatchTimer(-1, this);
+			this.timerModule = this.getModules().getModule(TimeModule.class);
+			this.timerModule.create();
+			this.timerModule.run();
 		}
 
-		TeamModule teamModule = this.getModules().getModule(TeamModule.class);
-		if (this.mTimer != null && teamModule.hasEnoughPlayers()) {
-			this.mTimer.run();
-		}
+		this.mTimer = new MatchTimer(-1, this);
+		this.mTimer.run();
 	}
 
-	public void end() {
+	public void end(Team winner) {
 		if (this.state == MatchState.RUNNING) {
 
 			this.setState(MatchState.ENDED);
 			this.context.unload();
 
-			List<OvercastPlayer> players = OvercastPlayer.getPlayers();
-			for (OvercastPlayer player : players) {
-				if (!player.isObserver()) {
-					TeamManager.addPlayer(TeamUtil.getTeamModule().getObservers(), player);
-				}
-			}
-			Bukkit.broadcastMessage(ChatColor.RED + "The match has ended");
 
+			this.pgm.refreshTeams();
+			
+			for (Module module : this.modules) {
+				if (module instanceof ObserverModule) {
+					continue;
+				}
+				this.factory.removeModule(module);
+			}
+
+			if (winner != null) {
+				Bukkit.broadcastMessage(winner.getColoredName() + ChatColor.WHITE + "Wins");
+			} else {
+				Bukkit.broadcastMessage(ChatColor.RED + "The match has ended");
+			}
 		}
 	}
 
@@ -216,7 +219,7 @@ public class Match {
 	/** the match info */
 
 	public void matchInfo(OvercastPlayer viewer) {
-		viewer.sendMessage(BukkitUtils.dashedChatMessage(ChatColor.RESET + " Match Info ", "-",
+		viewer.sendMessage(BukkitUtils.dashedChatMessage(ChatColor.RESET + " Match Info", "-",
 				ChatColor.WHITE + "" + ChatColor.STRIKETHROUGH));
 
 		boolean haveGameInfo = isRunning() || isEnding();
@@ -224,13 +227,9 @@ public class Match {
 		boolean wools = getModules().isModuleLoaded(WoolObjective.class);
 
 		String time = ChatColor.DARK_PURPLE + "Time: " + ChatColor.GOLD;
+		
 		if (haveGameInfo) {
-			if (this.mTimer != null) {
-				time += TimeUtil.formatIntoHHMMSS(this.mTimer.getSeconds());
-			} else {
-				TimeModule timeModule = getModules().getModule(TimeModule.class);
-				time += TimeUtil.formatIntoHHMMSS(timeModule.getTime());
-			}
+			time += TimeUtil.formatIntoHHMMSS(this.mTimer.getSeconds());
 		} else {
 			time += TimeUtil.formatIntoHHMMSS(0);
 		}
@@ -257,7 +256,8 @@ public class Match {
 			}
 
 			Team obs = teamMod.getObservers();
-			String format = message + obs.getColoredName() + ChatColor.GRAY + ": " + ChatColor.WHITE + "" + obs.getMembers().size();
+			String format = message + obs.getColoredName() + ChatColor.GRAY + ": " + ChatColor.WHITE + ""
+					+ obs.getMembers().size();
 			viewer.sendMessage(format);
 		}
 
@@ -268,12 +268,12 @@ public class Match {
 					// FIXME make this use all types of objectves :)
 					if (wools) {
 						objectives.put(team, WoolObjective.getObjectives(team));
-					}
+					}  
 				}
 			}
 
 			if (!objectives.isEmpty()) {
-				viewer.sendMessage(ChatColor.DARK_PURPLE + "Goals: ");
+				viewer.sendMessage(ChatColor.DARK_PURPLE + "Goals: "); 
 				for (Entry<Team, Collection<WoolObjective>> entry : objectives.entrySet()) {
 					viewer.sendMessage(entry.getKey().getColoredName() + ChatColor.GRAY + ": "
 							+ Joiner.on(" ").join(StringUtils.to(entry.getValue())));
@@ -290,6 +290,10 @@ public class Match {
 	/** get the next map */
 	public Map getNext() {
 		return this.next;
+	}
+
+	public TimeModule getTimeModule() {
+		return this.timerModule;
 	}
 
 	/** get the current state of the match */
@@ -325,7 +329,7 @@ public class Match {
 		setNext(map);
 	}
 
-	/** if the current state of the match is currently running */ 
+	/** if the current state of the match is currently running */
 	public boolean isRunning() {
 		return this.state == MatchState.RUNNING;
 	}
@@ -337,6 +341,12 @@ public class Match {
 
 	public TutorialManager getTutorialManager() {
 		return this.tutManager;
+	}
+
+	// return the WinManager class
+
+	public WinManager getWinManager() {
+		return this.winM;
 	}
 
 	public void disable() {
@@ -357,6 +367,10 @@ public class Match {
 
 	public void broadcast(String string) {
 		Bukkit.broadcastMessage(string);
+	}
+
+	public MatchTimer getMatchTimer() {
+		return this.mTimer;
 	}
 
 }

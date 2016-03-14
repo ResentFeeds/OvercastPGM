@@ -41,7 +41,7 @@ public class TeamPicker {
 			for (int i = 0; i < teams.getMembers().size(); i++) {
 				members = i;
 			}
-
+			
 			max = teams.getMax() * amount;
 		}
 
@@ -91,4 +91,5 @@ public class TeamPicker {
 		return inv;
 
 	}
+ 
 }

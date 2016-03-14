@@ -10,19 +10,15 @@ import static org.bukkit.ChatColor.*;
 public class AdminChannel extends PrivateChannel {
 
 	public AdminChannel() {
-		super("Admin", new Permission("channel.admin.receive"));
+		super("Admin", new Permission("overcast.admin.receive"));
 	}
 
 	@Override
 	public String format(OvercastPlayer player, String message) {
-		String name = player.getName();
-		if (player.hasNickname()) {
-			name = player.getNickname();
-		} 
-		String prefix = "[Admin]";
-
+		String name = player.getPlayerName();
+		String prefix = "[Admin]";  
 		Team team = player.getTeam();
-
-		return prefix + WHITE + " <" + team.getColor() + name + ChatColor.WHITE + ">: " + message;
+		return prefix + WHITE + " <" + (player.isAuthor() ? ChatColor.DARK_AQUA + "*" : "") + team.getColor() + name
+				+ ChatColor.WHITE + ">: " + message;
 	}
 }

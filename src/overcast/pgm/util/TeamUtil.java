@@ -3,6 +3,7 @@ package overcast.pgm.util;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Color;
 
 import overcast.pgm.match.MatchHandler;
@@ -61,5 +62,16 @@ public class TeamUtil {
 			}
 		}
 		return null;
+	}
+
+	public static int getMaxPlayers() {
+		int amount = 0;
+		int max = 0;
+		for (Team team : getTeamModule().getTeams()) {
+			amount++;
+			max = team.getMax();
+		}
+
+		return max * amount;
 	}
 }

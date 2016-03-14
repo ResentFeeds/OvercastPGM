@@ -10,12 +10,14 @@ import overcast.pgm.util.TimeUtil;
 public class MatchTimer extends OvercastTimer {
 
 	private ModuleCollection<BroadcastModule> bModules;
-
+	boolean broadcasts;
+	
 	public MatchTimer(int sec, Match match) {
 		super(sec, match);
 
-		boolean broadcasts = match.getModules().isModuleLoaded(BroadcastModule.class);
-		if (broadcasts) {
+		this.broadcasts = match.getModules().isModuleLoaded(BroadcastModule.class);
+		
+		if (this.broadcasts) {
 			this.bModules = match.getModules().getModules(BroadcastModule.class);
 		}
 	}
@@ -24,12 +26,13 @@ public class MatchTimer extends OvercastTimer {
 	public void run() {
 		this.sec++;
 
-		for (BroadcastModule b : bModules) {
-			if (b != null) {
-				b.run();
+		if (this.broadcasts) {
+			for (BroadcastModule b : bModules) {
+				if (b != null) {
+					b.run();
+				}
 			}
 		}
-
 		Bukkit.broadcastMessage(TimeUtil.formatIntoHHMMSS(this.sec));
 	}
 

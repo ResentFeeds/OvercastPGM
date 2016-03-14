@@ -20,7 +20,7 @@ public class NumberUtils {
 			return Double.parseDouble(input);
 		}
 	}
-	
+	 
 
 	public static short parseShort(String input){
 		 return Short.parseShort(input);

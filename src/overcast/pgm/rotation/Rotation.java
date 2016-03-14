@@ -30,6 +30,7 @@ public class Rotation {
 
 		load(YamlConfiguration.loadConfiguration(this.rotationFile));
 
+	
 		for (Map rot : this.rotation) {
 			String name = rot.getInfo().getName();
 			this.rotationNames.add(name);
@@ -38,7 +39,7 @@ public class Rotation {
 
 	public void load(YamlConfiguration configuration) {
 		if (configuration.get("rotation.maps") == null) {
-			configuration.addDefault("rotation.maps", Arrays.asList("map"));
+			configuration.set("rotation.maps", Arrays.asList("map"));
 		} else {
 			setRotation(parseRotation(configuration
 					.getStringList("rotation.maps")));

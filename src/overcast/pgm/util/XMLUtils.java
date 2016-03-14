@@ -107,6 +107,11 @@ public class XMLUtils {
 
 		return elements;
 	}
+	
+	
+	public static boolean hasChildElements(Element parent){
+		return getChildElements(parent).size() > 0;
+	}
 
 	public static Element getChildElement(Element parent, String tag) {
 		NodeList lists = parent.getChildNodes();

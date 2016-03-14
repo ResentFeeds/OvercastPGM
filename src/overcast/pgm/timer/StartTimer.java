@@ -16,7 +16,7 @@ public class StartTimer extends OvercastTimer {
 	 *            the match that this will run in
 	 */
 	
-	static boolean finished = false;
+	 boolean finished = false;
 	
 	
 	public StartTimer(int sec, Match match) {
@@ -52,12 +52,12 @@ public class StartTimer extends OvercastTimer {
 	}
 	
 	
-	public static void setFinished(boolean value){
+	public  void setFinished(boolean value){
 		finished = value;
 	} 
 	
 	
-	public static boolean isFinished(){
+	public boolean isFinished(){
 		return finished;
 	}
 }

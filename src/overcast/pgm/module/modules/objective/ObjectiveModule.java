@@ -30,7 +30,7 @@ public abstract class ObjectiveModule extends Module {
 
 	public void setCompleted(boolean completed, Characters character) throws Exception {
 		this.completed = completed;
-		if (this.character == character) 
+		if (this.character == character ) 
 				throw new Exception("The character of " + character.getUTF() + " is already in use!"); 
 		this.character = character;
 	}

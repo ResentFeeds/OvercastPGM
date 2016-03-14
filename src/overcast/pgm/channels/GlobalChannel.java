@@ -14,16 +14,11 @@ public class GlobalChannel extends Channel {
 	@Override
 	public String format(OvercastPlayer player, String message) {
 
-		String name = player.getName();
-
-		if (player.hasNickname()) {
-			name = player.getNickname();
-		}
-
+		String name = player.getPlayerName();
 		Team team = player.getTeam();
 
-		return ChatColor.WHITE + "<" + team.getColor() + name + ChatColor.WHITE
-				+ ">: " + message;
+		return ChatColor.WHITE + "<" + (player.isAuthor() ? ChatColor.DARK_AQUA + "*" : "") + team.getColor() + name
+				+ ChatColor.WHITE + ">: " + message;
 	}
 
 }

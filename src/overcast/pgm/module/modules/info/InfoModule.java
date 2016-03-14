@@ -10,6 +10,7 @@ import overcast.pgm.builder.Builder;
 import overcast.pgm.module.Module;
 import overcast.pgm.module.ModuleInfo;
 import overcast.pgm.util.BukkitUtils;
+import overcast.pgm.util.TeamUtil;
 
 @ModuleInfo(name = "info", desc = "info about the map")
 public class InfoModule extends Module {
@@ -60,7 +61,10 @@ public class InfoModule extends Module {
 		if (hasContributors()) {
 			for (Contributor contributor : this.contributors) {
 				String name = contributor.getName();
-				this.contributorNames.put(name, contributor.hasContribution() ? contributor.getContribution() : null);
+				if (name != null) {
+					this.contributorNames.put(name,
+							contributor.hasContribution() ? contributor.getContribution() : null);
+				}
 			}
 		}
 	}
@@ -85,7 +89,7 @@ public class InfoModule extends Module {
 	}
 
 	public boolean hasContributors() {
-		return this.getContributors().size() > 0 || this.getContributors() != null;
+		return this.contributors.size() >= 1;
 	}
 
 	public HashMap<String, String> getAuthorNames() {
@@ -120,9 +124,8 @@ public class InfoModule extends Module {
 		}
 		return false;
 	}
-	
-	
-	public boolean isFriendlyFireEnabled(){
+
+	public boolean isFriendlyFireEnabled() {
 		return this.friendlyfire;
 	}
 
@@ -166,18 +169,22 @@ public class InfoModule extends Module {
 	public void getMapInformation(Player p) {
 		p.sendMessage(
 				ChatColor.DARK_PURPLE + ChatColor.BOLD.toString() + "Objective: " + ChatColor.GOLD + this.objective);
-
 		if (this.authors.size() == 1) {
-			p.sendMessage(new String[] { ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Author: " + ChatColor.RED
-					+ this.names.keySet().toArray()[0] });
+			boolean contribution = this.names.values().toArray()[0] != null;
+			String author = ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Author: " + ChatColor.DARK_AQUA
+					+ this.names.keySet().toArray()[0];
+			if (contribution) {
+				author += ChatColor.GRAY + " - " + this.names.values().toArray()[0];
+			}
+			p.sendMessage(author);
 		} else {
-			p.sendMessage(new String[] { ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Authors: " });
+			p.sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Authors: ");
 
 			for (Entry<String, String> authorNames : this.names.entrySet()) {
-				String string = new String[] { "* " + ChatColor.RED + authorNames.getKey() }[0];
+				String string = "* " + ChatColor.DARK_AQUA + authorNames.getKey();
 
 				if (authorNames.getValue() != null) {
-					string += new String[] { ChatColor.GREEN + " (" + authorNames.getValue() + ")" }[0];
+					string += ChatColor.GRAY + " - " + authorNames.getValue();
 
 				}
 				p.sendMessage(string);
@@ -185,31 +192,30 @@ public class InfoModule extends Module {
 		}
 
 		if (hasContributors()) {
-			if (contributors.size() == 1) { 
-				p.sendMessage(new String[] { ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Contributor: " + ChatColor.RED
-						+ this.contributorNames.keySet().toArray()[0] });
-			} else {
-				p.sendMessage(new String[] { ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Contributors: " });
-				for (Entry<String, String> contributors : this.contributorNames.entrySet()) {
-					String key = "* " + ChatColor.RED + contributors.getKey();
+			p.sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Contributor"
+					+ (this.contributors.size() != 1 ? "s" : "") + ":");
+			for (Entry<String, String> contributors : this.contributorNames.entrySet()) {
+				String key = "* " + ChatColor.DARK_AQUA + contributors.getKey();
 
-					if (contributors.getValue() != null) {
-						key += ChatColor.GREEN + " (" + contributors.getValue() + ")";
-					}
-
-					p.sendMessage(key);
+				if (contributors.getValue() != null) {
+					key += ChatColor.GRAY + " - " + contributors.getValue();
 				}
+
+				p.sendMessage(key);
 			}
 		}
 
 		if (hasRules()) {
-			p.sendMessage(new String[] { ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Rules: " });
+			p.sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Rules: ");
 			int i = 0;
 			for (Rule r : this.rules) {
 				String rule = (++i) + ") " + ChatColor.GOLD + r.getRule();
 				p.sendMessage(rule);
 			}
 		}
+
+		p.sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Max players: " + ChatColor.RESET + ""
+				+ ChatColor.GOLD + TeamUtil.getMaxPlayers());
 	}
 
 	public boolean hasRules() {

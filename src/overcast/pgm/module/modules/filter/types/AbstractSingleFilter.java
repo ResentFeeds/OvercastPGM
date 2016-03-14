@@ -17,8 +17,6 @@ public abstract class AbstractSingleFilter implements Filter {
             }
         }
         return FilterState.ABSTAIN;
-    }
-    
-    
+    } 
     
 }
